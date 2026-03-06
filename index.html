@@ -1128,6 +1128,7 @@ function saveProg() { sv(K.prog, progData); }
 
 function renderProg() {
   const wrap = document.getElementById('prog-wrap');
+  if (!wrap) return; // prog-wrap removed from DOM — progression lives in Notes tab now
   wrap.innerHTML = progData.map(sec => {
     const done = sec.items.filter(i => i.done).length, total = sec.items.length;
     const pct = total ? Math.round(done/total*100) : 0;
@@ -1863,7 +1864,7 @@ function renderNotes() {
 // EXPORT / IMPORT
 // ═══════════════════════════════════════════════
 function getAllData() {
-  return {v:2, exportedAt: new Date().toISOString(), builds, prog: progData, loot: lootItems, notes};
+  return {v:2, exportedAt: new Date().toISOString(), builds, prog: progData, loot: lootItems, notes, pins: pinnedWidgets};
 }
 
 function openIO() { document.getElementById('io-modal').classList.add('open'); document.getElementById('io-msg').style.display='none'; }
@@ -1888,6 +1889,8 @@ function applyImport(data) {
   if (data.prog)     { progData = data.prog; sv(K.prog, progData); renderProg(); }
   if (data.loot)     { lootItems = data.loot; sv(K.loot, lootItems); renderLoot(); }
   if (data.notes)    { notes = data.notes; sv(K.notes, notes); renderNotes(); }
+  if (data.pins)     { pinnedWidgets = data.pins; sv('wf2_pins', pinnedWidgets); }
+  renderDashboard();
   showIOMsg('✓ Import réussi ! Toutes les données ont été restaurées.', 'green');
 }
 
@@ -1895,7 +1898,12 @@ function importData(input) {
   const file = input.files[0];
   if (!file) return;
   const reader = new FileReader();
-  reader.onload = e => { try { applyImport(JSON.parse(e.target.result)); } catch { showIOMsg('Erreur de lecture du fichier JSON.', 'red'); } };
+  reader.onload = e => {
+    let parsed;
+    try { parsed = JSON.parse(e.target.result); }
+    catch { showIOMsg('Fichier illisible — pas un JSON valide.', 'red'); return; }
+    applyImport(parsed);
+  };
   reader.readAsText(file);
   input.value = '';
 }
