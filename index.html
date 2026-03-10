@@ -2649,9 +2649,10 @@ function renderDashboard() {
     });
   }
 }
-['build-modal','prog-modal','io-modal','faq-modal'].forEach(id => {
-  document.getElementById(id).addEventListener('click', e => {
-    if (e.target.id === id) document.getElementById(id).classList.remove('open');
+['build-modal','io-modal','faq-modal'].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) el.addEventListener('click', e => {
+    if (e.target.id === id) el.classList.remove('open');
   });
 });
 
