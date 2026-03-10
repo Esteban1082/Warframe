@@ -1,0 +1,2763 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TENNO COMPANION v2</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;500;600;700&family=Exo+2:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:       #05050f;
+  --bg2:      #0a0a1a;
+  --bg3:      #0f0f22;
+  --card:     #0c0c1e;
+  --card2:    #121228;
+  --border:   #1a1a38;
+  --border2:  #252550;
+  --gold:     #c9a227;
+  --gold2:    #e8c050;
+  --gold-dim: #4a3a0a;
+  --gold-glow:rgba(201,162,39,0.25);
+  --cyan:     #00d4ff;
+  --cyan2:    #7eeeff;
+  --cyan-dim: #002535;
+  --red:      #ff3a3a;
+  --red-dim:  #350808;
+  --green:    #39e87a;
+  --green-dim:#0a2818;
+  --orange:   #ff8c42;
+  --purple:   #b060ff;
+  --text:     #ddd5c8;
+  --text-dim: #6a6258;
+  --text-mid: #a09080;
+  --lith:  #a0c8ff; --meso: #a0e8a0; --neo: #ffe080; --axi: #ff9060; --req: #d080ff;
+}
+/* Thème clair */
+[data-theme="light"] {
+  --bg:       #e8e6e2;
+  --bg2:      #f0eeea;
+  --bg3:      #f5f3ef;
+  --card:     #faf8f4;
+  --card2:    #f5f3ef;
+  --border:   #d0ccc6;
+  --border2:  #b8b4ac;
+  --gold:     #a67c00;
+  --gold2:    #c9a227;
+  --gold-dim: #6b5a20;
+  --gold-glow:rgba(166,124,0,.2);
+  --cyan:     #0088aa;
+  --cyan2:    #00aacc;
+  --cyan-dim: #a8dce8;
+  --red:      #cc2828;
+  --red-dim:  #f0c8c8;
+  --green:    #1a9e50;
+  --green-dim:#c8ecd8;
+  --orange:   #c96a20;
+  --purple:   #8040c0;
+  --text:     #2a2620;
+  --text-dim: #6a6258;
+  --text-mid: #4a4640;
+}
+[data-theme="light"] body::before{background:radial-gradient(ellipse 70% 50% at 50% -5%,rgba(0,136,170,.06) 0%,transparent 65%),radial-gradient(ellipse 40% 60% at 95% 85%,rgba(166,124,0,.05) 0%,transparent 60%);}
+[data-theme="light"] body::after{opacity:.15;}
+[data-theme="light"] header,[data-theme="light"] nav{background:rgba(248,246,242,.97);border-color:var(--border);}
+/* Tooltips */
+[data-tooltip]{position:relative;cursor:help;}
+[data-tooltip]::after{content:attr(data-tooltip);position:absolute;bottom:100%;left:50%;transform:translateX(-50%) translateY(-6px);padding:6px 10px;background:var(--bg2);border:1px solid var(--border2);border-radius:4px;font-size:11px;font-family:'Rajdhani',sans-serif;white-space:normal;max-width:220px;text-align:center;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:500;box-shadow:0 4px 12px rgba(0,0,0,.3);}
+[data-tooltip]:hover::after{opacity:1;transform:translateX(-50%) translateY(-4px);}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'Exo 2',sans-serif;font-size:14px;min-height:100vh;overflow-x:hidden;}
+
+/* BG GRAIN */
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 70% 50% at 50% -5%,rgba(0,180,255,.055) 0%,transparent 65%),radial-gradient(ellipse 40% 60% at 95% 85%,rgba(201,162,39,.04) 0%,transparent 60%);pointer-events:none;z-index:0;}
+body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;z-index:0;opacity:.4;}
+
+/* ══ HEADER ══ */
+header{position:sticky;top:0;z-index:200;background:rgba(5,5,15,.97);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);display:flex;flex-direction:column;}
+.header-top{padding:0 16px;display:flex;align-items:center;gap:12px;height:50px;}
+.logo{display:flex;align-items:center;gap:10px;flex-shrink:0;text-decoration:none;}
+.logo svg{width:26px;height:26px;}
+.logo-text{font-family:'Orbitron',monospace;font-weight:900;font-size:11px;letter-spacing:3px;color:var(--gold2);text-shadow:0 0 18px var(--gold-glow);line-height:1;}
+.logo-text span{display:block;font-size:7px;letter-spacing:4px;color:var(--text-dim);font-weight:400;margin-top:3px;}
+.header-right{display:flex;align-items:center;gap:6px;margin-left:auto;flex-shrink:0;}
+#ws-status{font-size:11px;color:var(--text-dim);letter-spacing:.5px;white-space:nowrap;}
+#ws-status.live{color:var(--green);}
+#ws-status.err{color:var(--red);}
+.hbtn{padding:5px 10px;background:none;border:1px solid var(--border);color:var(--text-dim);border-radius:4px;cursor:pointer;font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;transition:all .2s;white-space:nowrap;}
+.hbtn:hover{border-color:var(--gold-dim);color:var(--gold);}
+.hbtn.cyan:hover{border-color:var(--cyan-dim);color:var(--cyan);}
+/* Nav bar — full width scrollable row below header-top */
+nav{display:flex;gap:0;overflow-x:auto;border-top:1px solid var(--border);background:rgba(5,5,15,.97);-webkit-overflow-scrolling:touch;}
+nav::-webkit-scrollbar{display:none;}
+.tab-btn{padding:10px 15px;background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;font-family:'Rajdhani',sans-serif;font-weight:600;font-size:12px;letter-spacing:1.5px;color:var(--text-dim);transition:all .2s;text-transform:uppercase;white-space:nowrap;flex-shrink:0;}
+.tab-btn:hover{color:var(--text);}
+.tab-btn.active{color:var(--gold2);border-bottom-color:var(--gold);text-shadow:0 0 10px var(--gold-glow);}
+
+/* ══ TABS ══ */
+.tab-content{display:none;}
+.tab-content.active{display:block;animation:fadeUp .25s ease;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+
+/* ══ LAYOUT ══ */
+.page{padding:20px;max-width:1400px;margin:0 auto;}
+
+/* ══ SECTION TITLES ══ */
+.sec-title{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim);margin-bottom:12px;display:flex;align-items:center;gap:10px;}
+.sec-title::after{content:'';flex:1;height:1px;background:var(--border);}
+
+/* ══ CARDS ══ */
+.card{background:var(--card);border:1px solid var(--border);border-radius:6px;padding:14px;transition:border-color .2s;}
+.card:hover{border-color:var(--border2);}
+.card-gold{border-left:2px solid var(--gold);}
+.card-cyan{border-left:2px solid var(--cyan);}
+.card-red{border-left:2px solid var(--red);}
+.card-green{border-left:2px solid var(--green);}
+
+/* ══ BADGES ══ */
+.badge{display:inline-flex;align-items:center;padding:2px 7px;border-radius:3px;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;font-family:'Rajdhani',sans-serif;}
+.b-lith{background:rgba(160,200,255,.15);color:var(--lith);}
+.b-meso{background:rgba(160,232,160,.15);color:var(--meso);}
+.b-neo{background:rgba(255,224,128,.15);color:var(--neo);}
+.b-axi{background:rgba(255,144,96,.15);color:var(--axi);}
+.b-req{background:rgba(208,128,255,.15);color:var(--req);}
+.b-gold{background:rgba(201,162,39,.15);color:var(--gold2);}
+.b-cyan{background:rgba(0,212,255,.15);color:var(--cyan2);}
+.b-red{background:rgba(255,58,58,.15);color:var(--red);}
+.b-green{background:rgba(57,232,122,.15);color:var(--green);}
+.b-orange{background:rgba(255,140,66,.15);color:var(--orange);}
+.b-purple{background:rgba(176,96,255,.15);color:var(--purple);}
+.b-gray{background:rgba(255,255,255,.07);color:var(--text-dim);}
+
+/* ══ TIMER ══ */
+.timer{font-family:'Orbitron',monospace;font-size:11px;color:var(--cyan);letter-spacing:1px;}
+.timer.urg{color:var(--red);animation:pulseR 1s ease-in-out infinite;}
+.timer.soon{color:var(--orange);}
+@keyframes pulseR{0%,100%{opacity:1;}50%{opacity:.4;}}
+
+/* ══ BUTTONS ══ */
+.btn-p{padding:8px 18px;background:linear-gradient(135deg,#6a4e0a,var(--gold));color:#08060a;border:none;border-radius:4px;cursor:pointer;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;transition:all .2s;white-space:nowrap;}
+.btn-p:hover{filter:brightness(1.15);transform:translateY(-1px);}
+.btn-g{padding:7px 14px;background:none;color:var(--text-dim);border:1px solid var(--border);border-radius:4px;cursor:pointer;font-family:'Rajdhani',sans-serif;font-weight:600;font-size:11px;letter-spacing:1px;text-transform:uppercase;transition:all .2s;white-space:nowrap;}
+.btn-g:hover{border-color:var(--gold-dim);color:var(--gold);}
+.btn-g.act{border-color:var(--gold);color:var(--gold);background:rgba(201,162,39,.08);}
+.btn-g.cyan:hover,.btn-g.cyan.act{border-color:var(--cyan-dim);color:var(--cyan);background:rgba(0,212,255,.06);}
+.btn-icon{background:none;border:none;color:var(--text-dim);cursor:pointer;padding:3px 6px;border-radius:3px;font-size:12px;transition:all .2s;line-height:1;}
+.btn-icon:hover{background:rgba(255,255,255,.08);color:var(--text);}
+.btn-icon.del:hover{background:rgba(255,58,58,.15);color:var(--red);}
+
+/* ══ INPUTS ══ */
+.inp,.sel,.ta{padding:8px 11px;background:var(--card);border:1px solid var(--border);border-radius:4px;color:var(--text);font-family:'Exo 2',sans-serif;font-size:13px;transition:border-color .2s;width:100%;}
+.inp:focus,.sel:focus,.ta:focus{outline:none;border-color:var(--gold-dim);}
+.inp::placeholder,.ta::placeholder{color:var(--text-dim);}
+.sel{cursor:pointer;background-color:var(--card);}
+.sel option{background:var(--bg2);}
+.ta{min-height:90px;resize:vertical;line-height:1.6;}
+.form-group{display:flex;flex-direction:column;gap:5px;}
+.form-label{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-dim);font-family:'Rajdhani',sans-serif;}
+
+/* ══ TOOLBAR ══ */
+.toolbar{display:flex;gap:8px;align-items:center;padding:14px 20px;border-bottom:1px solid var(--border);flex-wrap:wrap;background:rgba(255,255,255,.01);}
+
+/* ══ EMPTY STATE ══ */
+.empty{text-align:center;padding:50px 20px;color:var(--text-dim);}
+.empty .ei{font-size:36px;margin-bottom:12px;opacity:.3;}
+.empty p{font-size:12px;letter-spacing:.5px;}
+
+/* ══ LOADING / ERROR ══ */
+.loading{color:var(--text-dim);font-size:12px;padding:18px 0;text-align:center;letter-spacing:1px;}
+.err-msg{color:var(--red);font-size:12px;padding:18px 0;text-align:center;}
+
+/* ══ SCROLLBAR ══ */
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
+
+/* ══════════════════════════════════
+   WORLD STATE
+══════════════════════════════════ */
+.quicklinks{display:flex;gap:8px;padding:10px 20px;border-bottom:1px solid var(--border);flex-wrap:wrap;}
+.qlink{padding:4px 11px;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:20px;color:var(--text-dim);font-size:11px;text-decoration:none;letter-spacing:.5px;transition:all .2s;display:flex;align-items:center;gap:4px;}
+.qlink:hover{border-color:var(--cyan-dim);color:var(--cyan);background:rgba(0,212,255,.05);}
+.ws-grid{column-count:2;column-gap:16px;padding:20px;}
+.ws-grid .ws-card{break-inside:avoid;margin-bottom:16px;display:inline-block;width:100%;}
+@media(max-width:820px){.ws-grid{column-count:1;}}
+.ws-card{background:var(--card);border:1px solid var(--border);border-radius:8px;overflow:hidden;}
+.ws-head{padding:11px 15px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.02);}
+.ws-title{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:12px;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold);}
+.ws-body{padding:12px 15px;}
+.fiss-row{display:flex;align-items:center;justify-content:space-between;padding:7px 9px;border-radius:4px;margin-bottom:5px;background:rgba(255,255,255,.025);border:1px solid var(--border);gap:8px;flex-wrap:wrap;}
+.fiss-info{display:flex;flex-direction:column;gap:1px;flex:1;min-width:0;}
+.fiss-node{font-size:13px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.fiss-sub{font-size:10px;color:var(--text-dim);}
+.fiss-tags{display:flex;gap:4px;align-items:center;flex-shrink:0;}
+.sortie-m{display:flex;gap:10px;padding:9px;background:rgba(255,255,255,.025);border-radius:4px;border:1px solid var(--border);margin-bottom:7px;}
+.sortie-n{font-family:'Orbitron',monospace;font-size:16px;font-weight:700;color:var(--gold-dim);width:22px;text-align:center;flex-shrink:0;}
+.inv-row{padding:8px 10px;background:rgba(255,255,255,.025);border-radius:4px;border:1px solid var(--border);margin-bottom:5px;}
+.inv-bar-w{margin-top:5px;background:rgba(255,255,255,.05);border-radius:2px;height:3px;}
+.inv-bar{height:3px;border-radius:2px;background:linear-gradient(90deg,var(--cyan-dim),var(--cyan));transition:width .3s;}
+.nw-ch{padding:7px 9px;background:rgba(255,255,255,.025);border:1px solid var(--border);border-radius:4px;margin-bottom:5px;display:flex;justify-content:space-between;align-items:flex-start;gap:8px;}
+.nw-rep{font-family:'Rajdhani',sans-serif;font-weight:700;color:var(--gold);font-size:12px;white-space:nowrap;}
+.baro-dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);}
+.baro-dot.off{background:var(--text-dim);box-shadow:none;}
+.baro-item{display:flex;justify-content:space-between;align-items:center;padding:5px 9px;background:rgba(255,255,255,.025);border-radius:3px;margin-bottom:3px;font-size:11px;}
+.baro-price{color:var(--gold);font-family:'Rajdhani',sans-serif;font-weight:600;}
+.arbi-row{display:flex;gap:18px;flex-wrap:wrap;align-items:center;}
+.arbi-s{display:flex;flex-direction:column;gap:2px;}
+.arbi-l{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-dim);}
+.arbi-v{font-size:13px;color:var(--text);font-family:'Rajdhani',sans-serif;font-weight:600;}
+
+/* ══════════════════════════════════
+   BUILDS V2
+══════════════════════════════════ */
+.builds-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:14px;padding:18px 20px;}
+.build-card{background:var(--card);border:1px solid var(--border);border-radius:8px;overflow:hidden;transition:all .2s;position:relative;}
+.build-card:hover{border-color:var(--border2);transform:translateY(-2px);}
+.bc-thumb{width:100%;height:100px;object-fit:cover;object-position:center top;background:var(--bg3);display:block;border-bottom:1px solid var(--border);}
+.bc-thumb-placeholder{height:100px;background:linear-gradient(135deg,var(--bg3),var(--card2));display:flex;align-items:center;justify-content:center;border-bottom:1px solid var(--border);font-size:32px;opacity:.3;}
+.bc-top{padding:12px 14px;border-bottom:1px solid var(--border);}
+.bc-name{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:16px;color:var(--text);margin-bottom:4px;}
+.bc-meta{display:flex;gap:6px;align-items:center;flex-wrap:wrap;}
+.bc-body{padding:10px 14px;}
+.bc-notes{font-size:12px;color:var(--text-mid);line-height:1.6;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
+.bc-foot{padding:9px 14px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:8px;}
+.bc-actions{display:flex;gap:4px;align-items:center;}
+.of-link{font-size:11px;color:var(--cyan);text-decoration:none;letter-spacing:.5px;padding:3px 8px;border:1px solid var(--cyan-dim);border-radius:3px;transition:all .2s;}
+.of-link:hover{background:rgba(0,212,255,.1);}
+
+/* ══════════════════════════════════
+   AUTOCOMPLETE
+══════════════════════════════════ */
+.ac-wrap{position:relative;}
+.ac-list{position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--bg2);border:1px solid var(--border2);border-radius:4px;max-height:200px;overflow-y:auto;z-index:999;box-shadow:0 8px 30px rgba(0,0,0,.6);}
+.ac-item{padding:8px 12px;cursor:pointer;font-size:13px;display:flex;align-items:center;gap:10px;transition:background .15s;}
+.ac-item:hover,.ac-item.sel{background:rgba(201,162,39,.1);color:var(--gold2);}
+.ac-item img{width:28px;height:28px;object-fit:contain;border-radius:3px;background:var(--bg3);flex-shrink:0;}
+.ac-item-info{flex:1;min-width:0;}
+.ac-name{font-size:12px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.ac-type{font-size:10px;color:var(--text-dim);}
+
+/* ══════════════════════════════════
+   FISSURE FILTERS
+══════════════════════════════════ */
+.fiss-filter-bar{display:flex;gap:6px;padding:8px 15px;border-bottom:1px solid var(--border);flex-wrap:wrap;align-items:center;background:rgba(255,255,255,.01);}
+.fiss-tb{padding:3px 10px;background:none;border:1px solid var(--border);border-radius:12px;cursor:pointer;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--text-dim);transition:all .2s;white-space:nowrap;}
+.fiss-tb:hover{border-color:var(--border2);color:var(--text);}
+.fiss-tb.act{color:var(--gold);border-color:var(--gold-dim);background:rgba(201,162,39,.07);}
+.fiss-tb.act-sp{color:var(--red);border-color:var(--red-dim);background:rgba(255,58,58,.07);}
+.fiss-tb.act-storm{color:var(--purple);border-color:rgba(176,96,255,.3);background:rgba(176,96,255,.07);}
+
+/* ══════════════════════════════════
+   LOOT TRACKER V2 — REDESIGN
+══════════════════════════════════ */
+.loot-wrap{padding:18px 20px;}
+.loot-section-title{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim);margin-bottom:10px;display:flex;align-items:center;gap:10px;}
+.loot-section-title::after{content:'';flex:1;height:1px;background:var(--border);}
+.loot-tbl{width:100%;border-collapse:collapse;margin-bottom:6px;}
+.loot-tbl thead tr{border-bottom:1px solid var(--border);}
+.loot-tbl th{text-align:left;padding:7px 10px;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);}
+.loot-tbl tbody tr{border-bottom:1px solid rgba(26,26,56,.5);transition:background .15s;}
+.loot-tbl tbody tr:hover{background:rgba(255,255,255,.02);}
+.loot-tbl td{padding:8px 10px;font-size:12px;color:var(--text);vertical-align:middle;}
+/* Materials sub-panel */
+.mat-panel{background:var(--bg3);border-top:1px solid var(--border);}
+.mat-panel td{padding:0 !important;}
+.mat-inner{padding:10px 16px 14px;}
+.mat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:6px;margin-top:8px;}
+.mat-item{display:flex;align-items:center;gap:8px;padding:5px 8px;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:4px;}
+.mat-qty{font-family:'Orbitron',monospace;font-size:11px;color:var(--gold);font-weight:700;flex-shrink:0;}
+.mat-name{font-size:11px;color:var(--text-mid);flex:1;}
+.mat-relic{font-size:9px;color:var(--text-dim);}
+/* Totals section */
+.loot-totals{background:var(--card2);border:1px solid var(--border2);border-radius:6px;padding:14px 16px;margin-top:16px;}
+.total-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px;margin-top:10px;}
+.total-item{display:flex;align-items:center;gap:8px;padding:6px 10px;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:4px;}
+.total-qty{font-family:'Orbitron',monospace;font-size:12px;font-weight:700;color:var(--gold);min-width:28px;text-align:right;}
+.total-name{font-size:12px;color:var(--text-mid);}
+.loot-tags{margin-top:4px;display:flex;flex-wrap:wrap;gap:4px;}
+/* old table fallback */
+table{width:100%;border-collapse:collapse;min-width:700px;}
+thead tr{border-bottom:1px solid var(--border);}
+th{text-align:left;padding:8px 11px;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);}
+tbody tr{border-bottom:1px solid rgba(26,26,56,.5);transition:background .15s;}
+tbody tr:hover{background:rgba(255,255,255,.02);}
+td{padding:9px 11px;font-size:12px;color:var(--text);vertical-align:middle;}
+.p-high{color:var(--red);font-weight:600;}
+.p-med{color:var(--orange);}
+.p-low{color:var(--text-dim);}
+.s-farm{color:var(--cyan);}
+.s-done{color:var(--green);}
+.s-pend{color:var(--text-dim);}
+.craft-toggle{background:none;border:1px solid var(--border);border-radius:3px;color:var(--text-dim);cursor:pointer;padding:2px 7px;font-size:10px;transition:all .2s;}
+.craft-toggle:hover{border-color:var(--cyan-dim);color:var(--cyan);}
+.craft-row{display:none;}
+.craft-row.open{display:table-row;}
+.craft-panel{padding:10px 14px;background:var(--bg3);border-top:1px solid var(--border);}
+.craft-cols{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;margin-top:8px;}
+.craft-col-title{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-bottom:6px;font-family:'Rajdhani',sans-serif;font-weight:700;}
+.craft-item{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-mid);margin-bottom:4px;}
+.craft-qty{font-weight:600;color:var(--gold);margin-right:2px;}
+.relic-chip{display:inline-flex;align-items:center;gap:4px;padding:2px 6px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:3px;font-size:10px;color:var(--text-mid);margin:2px;}
+.loot-add-form{padding:0 20px 18px;display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;}
+
+/* ══════════════════════════════════
+   NEWS TAB
+══════════════════════════════════ */
+.news-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px;padding:18px 20px;}
+.news-card{background:var(--card);border:1px solid var(--border);border-radius:8px;overflow:hidden;transition:all .2s;text-decoration:none;display:flex;flex-direction:column;}
+.news-card:hover{border-color:var(--border2);transform:translateY(-2px);}
+.news-img{width:100%;height:150px;object-fit:cover;background:var(--bg3);}
+.news-body{padding:12px 14px;flex:1;display:flex;flex-direction:column;gap:6px;}
+.news-date{font-size:10px;color:var(--text-dim);letter-spacing:.5px;}
+.news-title{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:15px;color:var(--text);line-height:1.3;}
+.news-cat{font-size:10px;color:var(--cyan);letter-spacing:1px;text-transform:uppercase;}
+.news-foot{padding:10px 14px;border-top:1px solid var(--border);font-size:11px;color:var(--cyan);}
+
+/* ══════════════════════════════════
+   NOTES & OBJECTIFS
+══════════════════════════════════ */
+.notes-grid{column-count:3;column-gap:14px;padding:18px 20px;}
+@media(max-width:1100px){.notes-grid{column-count:2;}}
+@media(max-width:660px){.notes-grid{column-count:1;}}
+.note-card,.obj-card{break-inside:avoid;display:inline-block;width:100%;margin-bottom:14px;background:var(--card);border:1px solid var(--border);border-radius:8px;overflow:visible;transition:border-color .2s;vertical-align:top;}
+.note-card{border-left:2px solid var(--gold-dim);}
+.obj-card{border-left:2px solid var(--cyan-dim);}
+.note-card:hover{border-color:var(--border2);}
+.obj-card:hover{border-color:var(--border2);}
+.note-head,.obj-head{padding:9px 13px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.02);}
+.note-ti,.obj-ti{background:none;border:none;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:14px;letter-spacing:1px;flex:1;min-width:0;color:var(--gold);}
+.obj-ti{color:var(--cyan);}
+.note-ti:focus,.obj-ti:focus{outline:none;}
+.note-ti::placeholder{color:var(--gold-dim);}
+.obj-ti::placeholder{color:var(--cyan-dim);}
+.note-ta{background:none;border:none;color:var(--text-mid);font-family:'Exo 2',sans-serif;font-size:13px;line-height:1.6;padding:11px 13px;min-height:90px;resize:vertical;width:100%;}
+.note-ta:focus{outline:none;}
+.note-ta::placeholder{color:var(--text-dim);}
+/* Objective items */
+.obj-body{padding:8px 13px 12px;}
+.obj-item{display:flex;align-items:flex-start;gap:8px;padding:5px 3px;border-radius:4px;transition:background .15s;}
+.obj-item:hover{background:rgba(255,255,255,.025);}
+.obj-cb{width:15px;height:15px;border:1.5px solid var(--border2);border-radius:3px;cursor:pointer;flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;transition:all .2s;}
+.obj-cb.chk{background:var(--cyan);border-color:var(--cyan);}
+.obj-cb.chk::after{content:'✓';font-size:9px;color:#060e0a;font-weight:700;}
+.obj-item-txt{font-size:13px;color:var(--text);flex:1;line-height:1.4;word-break:break-word;}
+.obj-item.done .obj-item-txt{color:var(--text-dim);text-decoration:line-through;}
+.obj-item-del{background:none;border:none;color:transparent;cursor:pointer;font-size:10px;padding:1px 4px;border-radius:3px;flex-shrink:0;transition:all .2s;}
+.obj-item:hover .obj-item-del{color:var(--text-dim);}
+.obj-item-del:hover{background:rgba(255,58,58,.15);color:var(--red) !important;}
+.obj-progress{height:2px;background:rgba(255,255,255,.05);margin:0 13px 8px;}
+.obj-progress-bar{height:2px;border-radius:1px;background:linear-gradient(90deg,var(--cyan-dim),var(--cyan));transition:width .3s;}
+.obj-add-row{display:flex;gap:6px;padding:0 5px 4px;align-items:center;}
+.obj-add-input{flex:1;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:4px;padding:5px 9px;color:var(--text);font-family:'Exo 2',sans-serif;font-size:12px;transition:border-color .2s;}
+.obj-add-input:focus{outline:none;border-color:var(--cyan-dim);}
+.obj-add-input::placeholder{color:var(--text-dim);}
+.note-foot{padding:6px 13px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+.note-date{font-size:10px;color:var(--text-dim);}
+.obj-count{font-family:'Orbitron',monospace;font-size:9px;color:var(--cyan);letter-spacing:1px;}
+
+/* ══════════════════════════════════
+   MODAL
+══════════════════════════════════ */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:400;backdrop-filter:blur(5px);align-items:center;justify-content:center;padding:20px;}
+.modal-bg.open{display:flex;animation:fadeUp .2s ease;}
+.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:10px;width:100%;max-width:540px;overflow:hidden;box-shadow:0 24px 70px rgba(0,0,0,.85);}
+.modal-head{padding:15px 18px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;background:rgba(201,162,39,.04);}
+.modal-title{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:13px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);}
+.modal-x{background:none;border:none;color:var(--text-dim);cursor:pointer;font-size:16px;padding:2px 6px;border-radius:3px;transition:all .2s;}
+.modal-x:hover{background:rgba(255,58,58,.15);color:var(--red);}
+.modal-body{padding:18px;display:flex;flex-direction:column;gap:13px;max-height:70vh;overflow-y:auto;}
+.modal-foot{padding:13px 18px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px;}
+.modal-row{display:flex;gap:10px;}
+.modal-row > *{flex:1;}
+.res-preview{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:12px;}
+.res-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;}
+.res-item{font-size:12px;color:var(--text-mid);display:flex;align-items:center;gap:6px;}
+.res-item .qty{color:var(--gold);font-weight:600;}
+
+/* ══════════════════════════════════
+   EXPORT/IMPORT MODAL
+══════════════════════════════════ */
+.io-btn{display:flex;gap:14px;margin-top:6px;}
+.io-area{padding:12px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;font-family:'Orbitron',monospace;font-size:10px;color:var(--text-dim);max-height:160px;overflow:auto;word-break:break-all;user-select:all;}
+
+/* ══════════════════════════
+   DASHBOARD
+══════════════════════════ */
+.dash-toolbar{padding:12px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);gap:10px;}
+.dash-masonry{column-count:3;column-gap:14px;padding:18px 20px;}
+@media(max-width:1100px){.dash-masonry{column-count:2;}}
+@media(max-width:660px){.dash-masonry{column-count:1;}}
+.dash-masonry .widget{break-inside:avoid;display:inline-block;width:100%;margin-bottom:14px;vertical-align:top;}
+.dash-empty{text-align:center;padding:60px 20px;color:var(--text-dim);column-span:all;}
+.widget{background:var(--card);border:1px solid var(--border);border-radius:8px;overflow:hidden;transition:border-color .2s;}
+.widget.dragging-mode{cursor:grab;transition:all .15s;}
+.widget.dragging-mode:hover{border-color:var(--gold-dim);transform:translateY(-1px);}
+.widget.drag-over{border-color:var(--cyan) !important;background:rgba(0,212,255,.04) !important;}
+.widget-head{padding:9px 13px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.02);}
+.widget-title{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:var(--text-dim);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.widget-body{padding:11px 13px;}
+.drag-handle{font-size:14px;color:var(--text-dim);cursor:grab;margin-right:6px;flex-shrink:0;user-select:none;}
+.pin-btn{background:none;border:1px solid var(--border);border-radius:3px;padding:2px 7px;font-size:9px;color:var(--text-dim);cursor:pointer;transition:all .2s;white-space:nowrap;font-family:'Rajdhani',sans-serif;font-weight:700;letter-spacing:.5px;text-transform:uppercase;}
+.pin-btn:hover{border-color:var(--gold-dim);color:var(--gold);}
+.pin-btn.pinned{border-color:var(--gold-dim);color:var(--gold);background:rgba(201,162,39,.08);}
+/* Legacy widget-strip kept for builds */
+.widget-strip{display:flex;align-items:center;gap:8px;padding:6px 9px;border-radius:4px;background:rgba(255,255,255,.025);border:1px solid var(--border);margin-bottom:5px;cursor:pointer;transition:border-color .15s;}
+.widget-strip:hover{border-color:var(--border2);}
+.widget-strip-name{font-size:12px;color:var(--text);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.widget-strip-sub{font-size:10px;color:var(--text-dim);white-space:nowrap;}
+.bc-stats{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;padding:8px;background:rgba(0,212,255,.04);border:1px solid var(--cyan-dim);border-radius:5px;}
+.bc-stat{display:flex;flex-direction:column;align-items:center;min-width:50px;}
+.bc-stat-v{font-family:'Orbitron',monospace;font-size:12px;font-weight:700;color:var(--cyan);}
+.bc-stat-k{font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--text-dim);margin-top:1px;}
+.bc-tags{margin:6px 0;display:flex;flex-wrap:wrap;gap:4px;}
+
+/* ══════════════════════════
+   WIDGET NAV + CLOUD SYNC
+══════════════════════════ */
+.widget-nav{background:none;border:none;color:var(--cyan);cursor:pointer;font-size:10px;padding:2px 7px;border-radius:3px;letter-spacing:.5px;transition:all .2s;font-family:'Rajdhani',sans-serif;font-weight:700;white-space:nowrap;}
+.widget-nav:hover{background:rgba(0,212,255,.1);color:var(--cyan2);}
+#cloud-status{font-size:13px;cursor:pointer;padding:4px 8px;border-radius:4px;transition:all .2s;letter-spacing:.5px;font-family:'Rajdhani',sans-serif;font-weight:700;}
+#cloud-status:hover{background:rgba(255,255,255,.06);}
+.cloud-setup{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:14px;margin-top:6px;display:flex;flex-direction:column;gap:10px;}
+.cloud-steps{font-size:11px;color:var(--text-mid);line-height:1.9;padding-left:4px;}
+.cloud-steps b{color:var(--gold);}
+.cloud-code{background:var(--bg);border:1px solid var(--border);border-radius:4px;padding:10px;font-family:'Orbitron',monospace;font-size:9px;color:var(--cyan);max-height:120px;overflow:auto;white-space:pre;user-select:all;line-height:1.6;}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════ HEADER ══════════════════════════ -->
+<header>
+  <div class="header-top">
+    <a class="logo" href="#">
+      <svg viewBox="0 0 28 28" fill="none"><polygon points="14,1 27,23 1,23" fill="none" stroke="#c9a227" stroke-width="1.4"/><polygon points="14,7 21,19 7,19" fill="rgba(201,162,39,.12)" stroke="#c9a227" stroke-width=".7"/><circle cx="14" cy="14" r="1.8" fill="#c9a227"/></svg>
+      <div class="logo-text">TENNO<span>COMPANION v2</span></div>
+    </a>
+    <div class="header-right">
+      <button class="hbtn" id="theme-btn" onclick="toggleTheme()" data-tooltip="Mode clair/sombre" title="Mode clair/sombre">🌓</button>
+      <button class="hbtn" data-tooltip="Aide rapide" onclick="openFAQ()">❓</button>
+      <span id="ws-status">—</span>
+      <span id="cloud-status" title="Cloud sync non configuré — cliquer pour configurer" onclick="openIO();setTimeout(()=>{const s=document.getElementById('cloud-section');if(s)s.scrollIntoView({behavior:'smooth'});},300)" style="color:var(--text-dim)">☁</span>
+      <button class="hbtn" onclick="loadWS()" data-tooltip="Rafraîchir World State">↻ WS</button>
+      <button class="hbtn cyan" onclick="openIO()" data-tooltip="Exporter / Importer les données">⬆⬇</button>
+    </div>
+  </div>
+  <nav>
+    <button class="tab-btn active" data-tab="dashboard">🏠 Dashboard</button>
+    <button class="tab-btn" data-tab="worldstate">🌍 World State</button>
+    <button class="tab-btn" data-tab="builds">⚙️ Builds</button>
+    <button class="tab-btn" data-tab="loot">🎒 Loot & Progression</button>
+    <button class="tab-btn" data-tab="news">📰 News</button>
+    <button class="tab-btn" data-tab="notes">📝 Notes</button>
+  </nav>
+</header>
+
+<!-- ══════════════════════════ DASHBOARD ══════════════════════════ -->
+<div class="tab-content active" id="tab-dashboard">
+  <div class="dash-toolbar" id="dash-toolbar">
+    <span style="font-size:11px;color:var(--text-dim);letter-spacing:.5px">Épingle des éléments depuis chaque onglet pour les voir ici</span>
+    <button class="btn-g" id="dash-reorder-btn" onclick="toggleReorderMode()" data-tooltip="Glisser-déposer pour réordonner les widgets">⠿ RÉORGANISER</button>
+  </div>
+  <div class="dash-masonry" id="dash-masonry">
+    <div class="dash-empty" id="dash-empty">
+      <div style="font-size:32px;margin-bottom:10px">📌</div>
+      <div style="font-family:'Rajdhani',sans-serif;font-size:13px;letter-spacing:2px;color:var(--text-dim)">AUCUN WIDGET ÉPINGLÉ</div>
+      <div style="font-size:11px;color:var(--text-dim);margin-top:6px">Utilise le bouton 📌 dans chaque onglet pour épingler des éléments</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════ WORLD STATE ══════════════════════════ -->
+<div class="tab-content" id="tab-worldstate">
+  <div class="quicklinks">
+    <a class="qlink" href="https://overframe.gg" target="_blank">⚙ Overframe</a>
+    <a class="qlink" href="https://alecaframe.com" target="_blank">🛡 AlecaFrame</a>
+    <a class="qlink" href="https://warframe.market" target="_blank">💱 WF Market</a>
+    <a class="qlink" href="https://wiki.warframe.com" target="_blank">📖 Wiki</a>
+    <a class="qlink" href="https://www.warframe.com/news" target="_blank">📰 News</a>
+    <a class="qlink" href="https://riven.market" target="_blank">🔮 Riven.Market</a>
+    <a class="qlink" href="https://drops.warframestat.us" target="_blank">💧 Drop Tables</a>
+  </div>
+  <!-- Fissure filter bar -->
+  <div class="fiss-filter-bar">
+    <span style="font-size:9px;color:var(--text-dim);letter-spacing:1.5px;font-family:'Rajdhani',sans-serif;font-weight:700;flex-shrink:0">TIER :</span>
+    <button class="fiss-tb act" onclick="setFissTier('all')">ALL</button>
+    <button class="fiss-tb" onclick="setFissTier('Lith')" style="color:var(--lith)">LITH</button>
+    <button class="fiss-tb" onclick="setFissTier('Meso')" style="color:var(--meso)">MESO</button>
+    <button class="fiss-tb" onclick="setFissTier('Neo')" style="color:var(--neo)">NEO</button>
+    <button class="fiss-tb" onclick="setFissTier('Axi')" style="color:var(--axi)">AXI</button>
+    <button class="fiss-tb" onclick="setFissTier('Requiem')" style="color:var(--req)">REQUIEM</button>
+    <div style="width:1px;height:14px;background:var(--border);margin:0 2px;flex-shrink:0"></div>
+    <button class="fiss-tb" id="fiss-sp-btn" onclick="toggleFissSP()">🔱 SP</button>
+    <button class="fiss-tb" id="fiss-storm-btn" onclick="toggleFissStorms()">⚡ STORMS</button>
+  </div>
+  <div class="ws-grid">
+    <div class="ws-card"><div class="ws-head"><span class="ws-title">VOID FISSURES</span><div style="display:flex;align-items:center;gap:6px"><span id="fiss-cnt" class="badge b-cyan">—</span><button class="pin-btn" data-action="pin-ws" data-id="fissures" data-tooltip="Épingler sur le Dashboard">📌</button></div></div><div class="ws-body" id="fiss-body"><div class="loading">Chargement...</div></div></div>
+    <div class="ws-card"><div class="ws-head"><span class="ws-title">SORTIE</span><div style="display:flex;align-items:center;gap:6px"><span class="timer" id="sort-t" data-tooltip="Temps restant avant la prochaine rotation">—</span><button class="pin-btn" data-action="pin-ws" data-id="sortie" data-tooltip="Épingler sur le Dashboard">📌</button></div></div><div class="ws-body" id="sort-body"><div class="loading">Chargement...</div></div></div>
+    <div class="ws-card"><div class="ws-head"><span class="ws-title">BARO KI'TEER</span><div style="display:flex;align-items:center;gap:6px"><span class="timer" id="baro-t" data-tooltip="Baro arrive / part">—</span><button class="pin-btn" data-action="pin-ws" data-id="baro" data-tooltip="Épingler sur le Dashboard">📌</button></div></div><div class="ws-body" id="baro-body"><div class="loading">Chargement...</div></div></div>
+    <div class="ws-card"><div class="ws-head"><span class="ws-title">ARBITRATION</span><div style="display:flex;align-items:center;gap:6px"><span class="timer" id="arbi-t" data-tooltip="Prochaine arbitration">—</span><button class="pin-btn" data-action="pin-ws" data-id="arbi" data-tooltip="Épingler sur le Dashboard">📌</button></div></div><div class="ws-body" id="arbi-body"><div class="loading">Chargement...</div></div></div>
+    <div class="ws-card"><div class="ws-head"><span class="ws-title">NIGHTWAVE</span><div style="display:flex;align-items:center;gap:6px"><span class="timer" id="nw-t" data-tooltip="Fin de la saison Nightwave">—</span><button class="pin-btn" data-action="pin-ws" data-id="nightwave" data-tooltip="Épingler sur le Dashboard">📌</button></div></div><div class="ws-body" id="nw-body"><div class="loading">Chargement...</div></div></div>
+    <div class="ws-card"><div class="ws-head"><span class="ws-title">INVASIONS</span><div style="display:flex;align-items:center;gap:6px"><span id="inv-cnt" class="badge b-orange">—</span><button class="pin-btn" data-action="pin-ws" data-id="invasions" data-tooltip="Épingler sur le Dashboard">📌</button></div></div><div class="ws-body" id="inv-body"><div class="loading">Chargement...</div></div></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════ BUILDS ══════════════════════════ -->
+<div class="tab-content" id="tab-builds">
+  <div class="toolbar">
+    <button class="btn-p" onclick="openBuildModal()">+ NOUVEAU BUILD</button>
+    <input class="inp" style="width:210px" type="text" placeholder="Nom / contexte / notes..." id="build-q" oninput="renderBuilds()">
+    <input class="inp" style="width:180px" type="text" placeholder="Filtre tags (ex: Steel Path)" id="build-tag-q" oninput="renderBuilds()">
+    <button class="btn-g act" id="bf-all" onclick="setBF('all')">TOUS</button>
+    <button class="btn-g" id="bf-warframe" onclick="setBF('warframe')">WARFRAMES</button>
+    <button class="btn-g" id="bf-primary" onclick="setBF('primary')">PRIMAIRE</button>
+    <button class="btn-g" id="bf-secondary" onclick="setBF('secondary')">SECONDAIRE</button>
+    <button class="btn-g" id="bf-melee" onclick="setBF('melee')">MÊLÉE</button>
+    <button class="btn-g" id="bf-companion" onclick="setBF('companion')">COMPAGNON</button>
+    <div style="width:1px;height:20px;background:var(--border);margin:0 4px;flex-shrink:0"></div>
+    <select class="sel" id="build-sort" onchange="renderBuilds()" style="width:130px;padding:6px 10px;font-size:11px">
+      <option value="date-desc">🕒 Récent d'abord</option>
+      <option value="date-asc">🕒 Ancien d'abord</option>
+      <option value="name">🔤 Nom A–Z</option>
+    </select>
+  </div>
+  <div class="builds-grid" id="builds-grid"></div>
+</div>
+
+<!-- Progression merged into Loot tab -->
+
+<!-- ══════════════════════════ LOOT & PROGRESSION ══════════════════════════ -->
+<div class="tab-content" id="tab-loot">
+
+  <!-- LOOT TOOLBAR -->
+  <div class="toolbar">
+    <button class="btn-p" onclick="focusLoot()">+ AJOUTER ITEM</button>
+    <div style="width:1px;height:20px;background:var(--border);margin:0 4px;flex-shrink:0"></div>
+    <button class="btn-g act lf" data-f="all"       onclick="setLF('all')">TOUS</button>
+    <button class="btn-g lf"     data-f="warframe"  onclick="setLF('warframe')">WARFRAME</button>
+    <button class="btn-g lf"     data-f="primary"   onclick="setLF('primary')">PRIMAIRE</button>
+    <button class="btn-g lf"     data-f="secondary" onclick="setLF('secondary')">SECONDAIRE</button>
+    <button class="btn-g lf"     data-f="melee"     onclick="setLF('melee')">MÊLÉE</button>
+    <button class="btn-g lf"     data-f="companion" onclick="setLF('companion')">COMPAGNON</button>
+    <button class="btn-g lf"     data-f="mod"       onclick="setLF('mod')">MOD</button>
+    <button class="btn-g lf"     data-f="other"     onclick="setLF('other')">AUTRE</button>
+    <div style="width:1px;height:20px;background:var(--border);margin:0 4px;flex-shrink:0"></div>
+    <button class="btn-g lf"     data-f="farming"   onclick="setLF('farming')">EN FARM 🔁</button>
+    <button class="btn-g lf"     data-f="done"      onclick="setLF('done')">OBTENUS ✓</button>
+    <div style="width:1px;height:20px;background:var(--border);margin:0 4px;flex-shrink:0"></div>
+    <input class="inp" style="width:210px" type="text" placeholder="Filtre nom / notes..." id="loot-q" oninput="renderLoot()">
+    <input class="inp" style="width:180px" type="text" placeholder="Filtre tags (ex: Steel Path)" id="loot-tag-q" oninput="renderLoot()">
+  </div>
+
+  <div class="loot-wrap" id="loot-wrap-main">
+    <div id="loot-craft-section"></div>
+    <div id="loot-totals-section"></div>
+    <div id="loot-empty" class="empty" style="display:none"><div class="ei">🎒</div><p>Aucun item — ajoute des items à crafter ci-dessous</p></div>
+  </div>
+
+  <!-- ADD FORM -->
+  <div class="loot-add-form" id="loot-form">
+    <div class="form-group"><label class="form-label">Item à crafter</label>
+      <div class="ac-wrap" style="width:220px">
+        <input class="inp" id="loot-name" placeholder="Nom de l'item..." autocomplete="off" oninput="acLoot(this.value)" onkeydown="acKey(event,'loot')">
+        <div class="ac-list" id="loot-ac" style="display:none"></div>
+      </div>
+    </div>
+    <div class="form-group"><label class="form-label">Catégorie</label>
+      <select class="sel" id="loot-cat" style="width:140px">
+        <option value="warframe">Warframe</option>
+        <option value="primary">Arme Primaire</option>
+        <option value="secondary">Arme Secondaire</option>
+        <option value="melee">Mêlée</option>
+        <option value="companion">Compagnon</option>
+        <option value="archwing">Archwing</option>
+        <option value="mod">Mod</option>
+        <option value="resource">Ressource</option>
+        <option value="other">Autre</option>
+      </select>
+    </div>
+    <div class="form-group"><label class="form-label">Source / Relique</label><input class="inp" id="loot-src" placeholder="ex: Axi V12" style="width:150px"></div>
+    <div class="form-group"><label class="form-label">Priorité</label>
+      <select class="sel" id="loot-prio" style="width:110px"><option value="high">Haute</option><option value="med" selected>Moyenne</option><option value="low">Basse</option></select>
+    </div>
+    <div class="form-group"><label class="form-label">Tags</label><input class="inp" id="loot-tags" placeholder="Steel Path, Eidolon..." style="width:150px"></div>
+    <div class="form-group"><label class="form-label">Notes</label><input class="inp" id="loot-note" placeholder="Optionnel..." style="width:150px"></div>
+    <div class="form-group"><label class="form-label">&nbsp;</label><button class="btn-p" onclick="addLoot()">AJOUTER</button></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════ NEWS ══════════════════════════ -->
+<div class="tab-content" id="tab-news">
+  <div class="toolbar">
+    <span style="font-size:12px;color:var(--text-dim)">Actualités & Patch Notes officiels Warframe</span>
+    <button class="btn-g" onclick="loadNews()">↻ ACTUALISER</button>
+  </div>
+  <div class="news-grid" id="news-grid"><div class="loading" style="grid-column:1/-1">Chargement des news...</div></div>
+</div>
+
+<!-- ══════════════════════════ NOTES & OBJECTIFS ══════════════════════════ -->
+<div class="tab-content" id="tab-notes">
+  <div class="toolbar">
+    <button class="btn-p" onclick="addBlock('note')">📝 NOUVELLE NOTE</button>
+    <button class="btn-p" onclick="addBlock('objective')" style="background:linear-gradient(135deg,#0a2535,var(--cyan-dim));color:var(--cyan);border:1px solid var(--cyan-dim)">☑ NOUVEL OBJECTIF</button>
+    <div style="flex:1;min-width:20px"></div>
+    <input class="inp" style="width:200px" type="text" placeholder="🔍 Rechercher..." id="notes-q" oninput="renderNotes()">
+  </div>
+  <div class="notes-grid" id="notes-grid"></div>
+</div>
+
+<!-- ══════════════════════════ BUILD MODAL ══════════════════════════ -->
+<div class="modal-bg" id="build-modal">
+  <div class="modal">
+    <div class="modal-head"><span class="modal-title" id="bm-title">NOUVEAU BUILD</span><button class="modal-x" onclick="closeBModal()">✕</button></div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Warframe / Arme</label>
+        <div class="ac-wrap"><input class="inp" id="b-name" placeholder="Commence à écrire le nom..." autocomplete="off" oninput="acBuild(this.value)" onkeydown="acKey(event,'build')"><div class="ac-list" id="build-ac" style="display:none"></div></div>
+      </div>
+      <div class="modal-row">
+        <div class="form-group"><label class="form-label">Type</label>
+          <select class="sel" id="b-type"><option value="warframe">Warframe</option><option value="primary">Arme Primaire</option><option value="secondary">Arme Secondaire</option><option value="melee">Mêlée</option><option value="companion">Compagnon</option><option value="archwing">Archwing</option></select>
+        </div>
+        <div class="form-group"><label class="form-label">Contexte d'utilisation</label><input class="inp" id="b-ctx" placeholder="ex: Steel Path, Endurance..."></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Lien Overframe</label>
+        <input class="inp" id="b-url" placeholder="https://overframe.gg/build/..." oninput="parseOFUrl(this.value)">
+        <div id="of-preview" style="display:none;margin-top:8px;padding:9px 11px;background:var(--bg3);border:1px solid var(--border);border-radius:5px;font-size:12px;color:var(--cyan);">
+          ↗ Build Overframe détecté
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Tags (optionnel)</label>
+        <input class="inp" id="b-tags" placeholder="Steel Path, Eidolon, Archon...">
+        <div style="font-size:10px;color:var(--text-dim);margin-top:4px;">Sépare les tags avec des virgules.</div>
+      </div>
+      <div class="form-group"><label class="form-label">Notes personnelles</label><textarea class="ta" id="b-notes" placeholder="Pourquoi ce build, quand l'utiliser, mods essentiels, astuces..."></textarea></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn-g" onclick="closeBModal()">ANNULER</button>
+      <button class="btn-p" onclick="saveBuild()">ENREGISTRER</button>
+    </div>
+  </div>
+</div>
+
+<!-- prog-modal removed — dead code -->
+
+<!-- ══════════════════════════ EXPORT/IMPORT MODAL ══════════════════════════ -->
+<div class="modal-bg" id="io-modal">
+  <div class="modal">
+    <div class="modal-head"><span class="modal-title">EXPORT / IMPORT DONNÉES</span><button class="modal-x" onclick="closeIO()">✕</button></div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Exporter toutes les données</label>
+        <div style="font-size:12px;color:var(--text-dim);margin-bottom:8px;">Génère un fichier JSON avec tous tes builds, loot tracker, progression et notes.</div>
+        <div class="io-btn"><button class="btn-p" onclick="exportData()">⬇ TÉLÉCHARGER JSON</button><button class="btn-g" onclick="copyExport()">📋 COPIER</button></div>
+      </div>
+      <div class="form-group" style="margin-top:6px">
+        <label class="form-label">Importer des données</label>
+        <div style="font-size:12px;color:var(--text-dim);margin-bottom:8px;">Charge un fichier JSON exporté depuis un autre appareil. <span style="color:var(--orange)">⚠ Remplace toutes les données actuelles.</span></div>
+        <div class="io-btn">
+          <button class="btn-g" onclick="document.getElementById('io-file').click()">📁 CHOISIR UN FICHIER</button>
+          <input type="file" id="io-file" accept=".json" style="display:none" onchange="importData(this)">
+        </div>
+        <textarea class="ta" id="io-paste" placeholder="...ou colle directement ton JSON ici" style="margin-top:8px;min-height:80px;font-family:monospace;font-size:11px;"></textarea>
+        <button class="btn-p" style="margin-top:8px" onclick="importFromPaste()">⬆ IMPORTER LE JSON COLLÉ</button>
+      </div>
+      <!-- ── CLOUD SYNC ── -->
+      <div class="form-group" id="cloud-section" style="margin-top:6px;padding-top:10px;border-top:1px solid var(--border)">
+        <label class="form-label" style="color:var(--cyan)">☁ SYNC CLOUD (Google Sheets)</label>
+        <div style="font-size:12px;color:var(--text-dim);margin-bottom:8px;">Sauvegarde et restaure tes données depuis un Google Sheet via Apps Script.</div>
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;">
+          <input class="inp" id="cloud-url-input" placeholder="https://script.google.com/macros/s/..." style="flex:1;font-size:11px" oninput="">
+          <button class="btn-g" onclick="saveCloudConfig()">SAUVER URL</button>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px;">
+          <button class="btn-p" onclick="cloudSave()" style="font-size:11px">⬆ SAUVEGARDER</button>
+          <button class="btn-g" onclick="cloudLoad(true)" style="font-size:11px">⬇ CHARGER</button>
+          <label style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text-dim);cursor:pointer;margin-left:6px">
+            <input type="checkbox" id="cloud-auto" style="accent-color:var(--cyan);width:13px;height:13px" onchange="setCloudAuto(this.checked)">
+            Auto-sync (5 min)
+          </label>
+        </div>
+        <!-- Setup instructions -->
+        <details style="margin-top:4px">
+          <summary style="font-size:11px;color:var(--text-dim);cursor:pointer;user-select:none;letter-spacing:.5px">⚙ Comment configurer Google Sheets (cliquer pour voir)</summary>
+          <div class="cloud-setup">
+            <div class="cloud-steps">
+              <b>1.</b> Crée un nouveau Google Sheet (sheets.google.com)<br>
+              <b>2.</b> Menu <b>Extensions → Apps Script</b><br>
+              <b>3.</b> Remplace tout le code par celui ci-dessous<br>
+              <b>4.</b> Clique <b>Déployer → Nouvelle déploiement</b><br>
+              <b>5.</b> Type : <b>Application Web</b> · Exécuter en tant que : <b>Moi</b> · Accès : <b>Tout le monde</b><br>
+              <b>6.</b> Copie l'URL dans le champ ci-dessus
+            </div>
+            <div class="cloud-code" id="cloud-code-block">function doGet(e) {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  var val = sheet.getRange('A1').getValue();
+  return ContentService.createTextOutput(val || '{}')
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+function doPost(e) {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  sheet.getRange('A1').setValue(e.postData.contents);
+  return ContentService.createTextOutput('{"ok":true}')
+    .setMimeType(ContentService.MimeType.JSON);
+}</div>
+            <button class="btn-g" onclick="copyCloudCode()" style="font-size:10px;padding:4px 10px">📋 COPIER LE CODE</button>
+          </div>
+        </details>
+      </div>
+
+      <div class="form-group" style="margin-top:6px;padding-top:10px;border-top:1px solid var(--border)">
+        <label class="form-label" style="color:var(--red)">⚠ Zone dangereuse</label>
+        <div style="font-size:12px;color:var(--text-dim);margin-bottom:8px;">Supprime <strong style="color:var(--red)">toutes</strong> les données locales (builds, loot, notes). Action irréversible — exporte d'abord.</div>
+        <button id="reset-btn" class="btn-g" style="border-color:var(--red-dim);color:var(--red)" onclick="resetAllData(this)">🗑 RÉINITIALISER TOUTES LES DONNÉES</button>
+      </div>
+      <div id="io-msg" style="font-size:12px;display:none;padding:8px 12px;border-radius:4px;margin-top:8px;"></div>
+    </div>
+    <div class="modal-foot"><button class="btn-g" onclick="closeIO()">FERMER</button></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════ FAQ / AIDE ══════════════════════════ -->
+<div class="modal-bg" id="faq-modal">
+  <div class="modal" style="max-width:560px">
+    <div class="modal-head"><span class="modal-title">❓ AIDE RAPIDE</span><button class="modal-x" onclick="closeFAQ()">✕</button></div>
+    <div class="modal-body" style="max-height:65vh;overflow-y:auto">
+      <div class="faq-item">
+        <div class="faq-q">📌 Pin / Épingler</div>
+        <div class="faq-a">Clique sur le bouton <strong>📌</strong> à côté d'un build, loot, note ou carte World State pour l'afficher sur ton Dashboard. Clique à nouveau pour retirer.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">⏱ Timers</div>
+        <div class="faq-a">Les timers (Sortie, Baro, Arbitration, Nightwave) affichent le temps restant. <em>Rouge</em> = moins de 1 h, <em>Orange</em> = moins de 6 h.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">🏷 Tags</div>
+        <div class="faq-a">Ajoute des tags (ex: Steel Path, Eidolon) aux builds et au loot pour mieux les organiser. Filtre ensuite par tag dans les champs dédiés.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">🔍 Filtres</div>
+        <div class="faq-a">Utilise les champs de recherche (nom, notes) et le filtre tags pour affiner la liste des builds et du loot.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">🌓 Thème</div>
+        <div class="faq-a">Le bouton <strong>🌓</strong> en haut à droite bascule entre mode sombre (par défaut) et mode clair.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">⬆⬇ Export / Import</div>
+        <div class="faq-a">Sauvegarde tes données en JSON ou restaure-les depuis un autre appareil. Données stockées localement dans ton navigateur.</div>
+      </div>
+    </div>
+    <div class="modal-foot"><button class="btn-g" onclick="closeFAQ()">FERMER</button></div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════
+// STORAGE
+// ═══════════════════════════════════════════════
+const K = {builds:'wf2_builds', prog:'wf2_prog', loot:'wf2_loot', notes:'wf2_notes'};
+const ld = k => { try { return JSON.parse(localStorage.getItem(k)) || null; } catch { return null; } };
+const sv = (k,v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} };
+
+// ═══════════════════════════════════════════════
+// TABS
+// ═══════════════════════════════════════════════
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+    if (btn.dataset.tab === 'news' && !newsLoaded) loadNews();
+  });
+});
+
+// ═══════════════════════════════════════════════
+// TIMER ENGINE
+// ═══════════════════════════════════════════════
+const timers = {};
+function fmt(ms) {
+  if (ms <= 0) return '00:00:00';
+  if (ms > 30 * 86400 * 1000) return '—'; // > 30 jours = données invalides
+  const s = Math.floor(ms/1000), h = Math.floor(s/3600), m = Math.floor((s%3600)/60), sec = s%60;
+  return h > 0 ? `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`
+               : `${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;
+}
+
+// Helper: always store ms number in timers, never Date object
+function setTimer(id, expiry) {
+  const d = parseExpiry(expiry);
+  timers[id] = {expiry: d ? d.getTime() : 0, el: document.getElementById(id)};
+}
+setInterval(() => {
+  const now = Date.now();
+  for (const [id, t] of Object.entries(timers)) {
+    if (!t.el) { t.el = document.getElementById(id); if (!t.el) continue; }
+    const ms = t.expiry - now;
+    t.el.textContent = fmt(ms);
+    t.el.className = 'timer' + (ms < 300000 ? ' urg' : ms < 1800000 ? ' soon' : '');
+  }
+}, 1000);
+
+// ═══════════════════════════════════════════════
+// ITEMS DATABASE (Warframe API — search on demand)
+// ═══════════════════════════════════════════════
+const itemCache = {}; // cache by query
+const itemByName = {}; // cache by exact name
+
+async function searchItems(q, limit = 10) {
+  if (!q || q.length < 2) return [];
+  const key = q.toLowerCase().trim();
+  if (itemCache[key]) return itemCache[key].slice(0, limit);
+  try {
+    const r = await fetch(`https://api.warframestat.us/items/search/${encodeURIComponent(key)}?language=en`);
+    if (!r.ok) return [];
+    const data = await r.json();
+    const results = (Array.isArray(data) ? data : []).filter(i => i.name);
+    itemCache[key] = results;
+    results.forEach(i => { itemByName[i.name.toLowerCase()] = i; });
+    return results.slice(0, limit);
+  } catch(e) { return []; }
+}
+
+async function getItem(name) {
+  if (!name) return null;
+  const key = name.toLowerCase();
+  if (itemByName[key]) return itemByName[key];
+  try {
+    const r = await fetch(`https://api.warframestat.us/items/search/${encodeURIComponent(key)}?language=en`);
+    if (!r.ok) return null;
+    const data = await r.json();
+    const found = (Array.isArray(data) ? data : []).find(i => i.name?.toLowerCase() === key);
+    if (found) itemByName[key] = found;
+    return found || null;
+  } catch(e) { return null; }
+}
+
+// Robust expiry parser — handles ISO strings, Unix ms, and Unix seconds
+function parseExpiry(exp) {
+  if (!exp) return null;
+  let d = new Date(exp);
+  if (!isNaN(d) && d.getFullYear() >= 2020) return d;
+  // Try as Unix seconds
+  const n = Number(exp);
+  if (!isNaN(n)) {
+    // If number looks like seconds (< year 2100 in seconds = 4102444800)
+    d = n < 4102444800 ? new Date(n * 1000) : new Date(n);
+    if (!isNaN(d) && d.getFullYear() >= 2020) return d;
+  }
+  return null;
+}
+
+function imgUrl(imageName) {
+  if (!imageName) return '';
+  return `https://cdn.warframestat.us/img/${imageName}`;
+}
+
+// TYPE MAPPING
+const TYPE_LABEL = {warframe:'Warframe',primary:'Arme Primaire',secondary:'Arme Secondaire',melee:'Mêlée',companion:'Compagnon',archwing:'Archwing'};
+const TYPE_BADGE = {warframe:'b-gold',primary:'b-cyan',secondary:'b-cyan',melee:'b-red',companion:'b-green',archwing:'b-orange'};
+const OF_PATH = {warframe:'warframes',primary:'primary-weapons',secondary:'secondary-weapons',melee:'melee-weapons',companion:'companions',archwing:'archwing'};
+
+// ═══════════════════════════════════════════════
+// AUTOCOMPLETE ENGINE
+// ═══════════════════════════════════════════════
+let acTarget = null; // {inputId, listId, onSelect}
+
+function makeAC(config) { return config; }
+
+function acBuild(q) { searchItems(q).then(r => renderAC('b-name','build-ac', r, item => selectBuildItem(item))); }
+function acLoot(q)  { searchItems(q).then(r => renderAC('loot-name','loot-ac', r, item => selectLootItem(item))); }
+
+function renderAC(inputId, listId, results, onSelect) {
+  const list = document.getElementById(listId);
+  if (!results.length) { list.style.display = 'none'; return; }
+  list.style.display = 'block';
+  list.innerHTML = results.map((item,i) => `
+    <div class="ac-item" data-idx="${i}" onmousedown="event.preventDefault()" onclick="acClick('${listId}',${i})">
+      <img src="${imgUrl(item.imageName)}" onerror="this.style.display='none'" alt="">
+      <div class="ac-item-info">
+        <div class="ac-name">${item.name}</div>
+        <div class="ac-type">${item.type || ''}</div>
+      </div>
+    </div>`).join('');
+  list._results = results;
+  list._onSelect = onSelect;
+}
+
+function acClick(listId, idx) {
+  const list = document.getElementById(listId);
+  if (!list._results) return;
+  list._onSelect(list._results[idx]);
+  list.style.display = 'none';
+}
+
+function acKey(e, target) {
+  const listId = target === 'build' ? 'build-ac' : 'loot-ac';
+  const list = document.getElementById(listId);
+  if (e.key === 'Escape') { list.style.display = 'none'; return; }
+  if (list.style.display === 'none') return;
+  const items = list.querySelectorAll('.ac-item');
+  if (!items.length) return;
+  const cur = list.querySelector('.ac-item.sel');
+  const idx = cur ? [...items].indexOf(cur) : -1;
+  if (e.key === 'ArrowDown') {
+    e.preventDefault();
+    cur?.classList.remove('sel');
+    const next = items[Math.min(idx + 1, items.length - 1)];
+    next.classList.add('sel');
+    next.scrollIntoView({block:'nearest'});
+  } else if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    cur?.classList.remove('sel');
+    if (idx <= 0) return;
+    const prev = items[idx - 1];
+    prev.classList.add('sel');
+    prev.scrollIntoView({block:'nearest'});
+  } else if (e.key === 'Enter') {
+    e.preventDefault();
+    const selected = cur || items[0];
+    if (selected) selected.click();
+  }
+}
+
+document.addEventListener('click', e => {
+  if (!e.target.closest('.ac-wrap')) {
+    document.querySelectorAll('.ac-list').forEach(l => l.style.display = 'none');
+  }
+});
+
+function selectBuildItem(item) {
+  document.getElementById('b-name').value = item.name;
+  document.getElementById('build-ac').style.display = 'none';
+  // Auto-detect type
+  const t = (item.type||'').toLowerCase();
+  if (t.includes('warframe') || t.includes('frame')) document.getElementById('b-type').value = 'warframe';
+  else if (t.includes('primary') || t.includes('rifle') || t.includes('shotgun') || t.includes('sniper') || t.includes('bow')) document.getElementById('b-type').value = 'primary';
+  else if (t.includes('secondary') || t.includes('pistol') || t.includes('thrown')) document.getElementById('b-type').value = 'secondary';
+  else if (t.includes('melee') || t.includes('sword') || t.includes('blade')) document.getElementById('b-type').value = 'melee';
+  else if (t.includes('sentinel') || t.includes('companion') || t.includes('animal')) document.getElementById('b-type').value = 'companion';
+  else if (t.includes('arch')) document.getElementById('b-type').value = 'archwing';
+}
+
+function selectLootItem(item) {
+  document.getElementById('loot-name').value = item.name;
+  document.getElementById('loot-ac').style.display = 'none';
+  // Auto-fill source from drops
+  if (item.drops && item.drops.length > 0) {
+    const relic = item.drops.find(d => d.type === 'Relic' || (d.location||'').includes('Relic'));
+    if (relic) document.getElementById('loot-src').value = relic.location;
+    else document.getElementById('loot-src').value = item.drops[0].location || '';
+  }
+  // Auto-detect category
+  const t = (item.type||'').toLowerCase();
+  const sel = document.getElementById('loot-cat');
+  if (t.includes('warframe') || t.includes('frame')) sel.value = 'warframe';
+  else if (t.includes('primary') || t.includes('rifle') || t.includes('shotgun') || t.includes('sniper') || t.includes('bow')) sel.value = 'primary';
+  else if (t.includes('secondary') || t.includes('pistol') || t.includes('thrown')) sel.value = 'secondary';
+  else if (t.includes('melee') || t.includes('sword') || t.includes('blade')) sel.value = 'melee';
+  else if (t.includes('sentinel') || t.includes('companion') || t.includes('animal') || t.includes('kubrow') || t.includes('kavat')) sel.value = 'companion';
+  else if (t.includes('arch')) sel.value = 'archwing';
+  else if (t.includes('mod')) sel.value = 'mod';
+  else if (t.includes('resource')) sel.value = 'resource';
+  else sel.value = 'other';
+}
+
+// ═══════════════════════════════════════════════
+// WORLD STATE
+// ═══════════════════════════════════════════════
+const WS = 'https://api.warframestat.us/pc';
+const TIER_CLS = {Lith:'b-lith',Meso:'b-meso',Neo:'b-neo',Axi:'b-axi',Requiem:'b-req',Omnia:'b-gold'};
+const TIER_ORD = ['Lith','Meso','Neo','Axi','Requiem','Omnia'];
+
+// Fissure filter state
+let fissFilter = { tier: 'all', sp: false, storms: false };
+
+function setFissTier(tier) {
+  fissFilter.tier = tier;
+  document.querySelectorAll('.fiss-tb:not(#fiss-sp-btn):not(#fiss-storm-btn)').forEach(b => b.classList.remove('act'));
+  const clicked = [...document.querySelectorAll('.fiss-tb')].find(b => {
+    const label = b.textContent.trim().toUpperCase();
+    return (tier === 'all' && label === 'ALL') || label === tier.toUpperCase();
+  });
+  clicked?.classList.add('act');
+  renderFiss(wsCache.fissures || null);
+}
+
+function toggleFissSP() {
+  fissFilter.sp = !fissFilter.sp;
+  document.getElementById('fiss-sp-btn')?.classList.toggle('act-sp', fissFilter.sp);
+  renderFiss(wsCache.fissures || null);
+}
+
+function toggleFissStorms() {
+  fissFilter.storms = !fissFilter.storms;
+  document.getElementById('fiss-storm-btn')?.classList.toggle('act-storm', fissFilter.storms);
+  renderFiss(wsCache.fissures || null);
+}
+
+async function fetchWS(endpoint) {
+  const ctrl = new AbortController();
+  const to = setTimeout(() => ctrl.abort(), 12000);
+  try {
+    const r = await fetch(`${WS}/${endpoint}?language=en`, {signal: ctrl.signal});
+    clearTimeout(to);
+    if (!r.ok) return null;
+    return await r.json();
+  } catch { clearTimeout(to); return null; }
+}
+
+async function loadWS() {
+  const status = document.getElementById('ws-status');
+  status.textContent = 'SYNC...'; status.className = '';
+  const [fiss, sort, nw, baro, arbi, inv] = await Promise.all([
+    fetchWS('fissures'), fetchWS('sortie'), fetchWS('nightwave'),
+    fetchWS('voidTrader'), fetchWS('arbitration'), fetchWS('invasions')
+  ]);
+  // Cache for dashboard widgets
+  if (fiss) wsCache.fissures = fiss;
+  if (sort) wsCache.sortie = sort;
+  if (baro) wsCache.baro = baro;
+  if (arbi) wsCache.arbi = arbi;
+  if (nw)   wsCache.nightwave = nw;
+  if (inv)  wsCache.invasions = inv;
+  renderFiss(fiss); renderSort(sort); renderBaro(baro); renderArbi(arbi); renderNW(nw); renderInv(inv);
+  renderDashboard(); // refresh WS widgets on dashboard
+  const ok = [fiss,sort,nw,baro,arbi,inv].filter(Boolean).length;
+  const now = new Date();
+  if (ok === 0) {
+    status.textContent = 'API HORS LIGNE'; status.className = 'err';
+  } else {
+    status.textContent = `LIVE ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+    status.className = 'live';
+  }
+}
+
+function renderFiss(data) {
+  const el = document.getElementById('fiss-body'), cnt = document.getElementById('fiss-cnt');
+  if (!Array.isArray(data) || !data.length) { el.innerHTML = '<div class="err-msg">Indisponible</div>'; return; }
+  const now = Date.now();
+  let active = data.filter(f => new Date(f.expiry) > now);
+  // Apply storms toggle — by default exclude void storms
+  if (!fissFilter.storms) active = active.filter(f => !f.isStorm);
+  else if (fissFilter.storms) {} // show all including storms
+  // Apply SP filter
+  if (fissFilter.sp) active = active.filter(f => f.isHard);
+  // Apply tier filter
+  if (fissFilter.tier !== 'all') active = active.filter(f => f.tier === fissFilter.tier);
+  cnt.textContent = active.length;
+  if (!active.length) { el.innerHTML = '<div class="loading" style="color:var(--green)">Aucune fissure</div>'; return; }
+  const byTier = {}; TIER_ORD.forEach(t => byTier[t] = []);
+  active.forEach(f => {
+    const tier = f.tier || 'Lith';
+    if (!byTier[tier]) byTier[tier] = [];
+    byTier[tier].push(f);
+  });
+  let h = '';
+  TIER_ORD.forEach(tier => (byTier[tier]||[]).forEach(f => {
+    const expMs = (parseExpiry(f.expiry) || new Date(0)).getTime();
+    const ms = expMs - now, tid = `ft-${f.id}`;
+    const spBadge = f.isHard ? ' <span class="badge b-purple" style="font-size:8px">SP</span>' : '';
+    const stormBadge = f.isStorm ? ' <span class="badge b-cyan" style="font-size:8px">STORM</span>' : '';
+    h += `<div class="fiss-row"><div class="fiss-info"><div class="fiss-node">${f.node||'—'}${spBadge}${stormBadge}</div><div class="fiss-sub">${f.missionType||''} · ${f.enemy||''}</div></div><div class="fiss-tags"><span class="badge ${TIER_CLS[tier]||'b-cyan'}">${tier}</span><span class="timer" id="${tid}">${fmt(ms)}</span></div></div>`;
+    timers[tid] = {expiry: expMs, el: null};
+  }));
+  el.innerHTML = h || '<div class="loading" style="color:var(--green)">Aucune fissure</div>';
+}
+
+function renderSort(data) {
+  const el = document.getElementById('sort-body');
+  if (!data || !data.variants) { el.innerHTML = '<div class="err-msg">Indisponible</div>'; return; }
+  setTimer('sort-t', data.expiry);
+  let h = `<div style="margin-bottom:9px;font-size:11px;color:var(--text-dim)">${data.faction||''} — Boss : <span style="color:var(--orange)">${data.boss||'?'}</span></div>`;
+  data.variants.forEach((v,i) => {
+    h += `<div class="sortie-m"><div class="sortie-n">${i+1}</div><div><div style="font-size:12px;color:var(--text)">${v.node||'—'}</div><div style="font-size:10px;color:var(--text-mid);margin-top:1px">${v.missionType||''}</div><div style="font-size:11px;color:var(--orange);margin-top:2px">${v.modifier||''}</div></div></div>`;
+  });
+  el.innerHTML = h;
+}
+
+function renderBaro(data) {
+  const el = document.getElementById('baro-body');
+  if (!data) { el.innerHTML = '<div class="err-msg">Indisponible</div>'; return; }
+  if (data.active) {
+    setTimer('baro-t', data.expiry);
+    const items = (data.inventory||[]).slice(0,14);
+    let h = `<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><div class="baro-dot"></div><span style="font-size:11px;color:var(--green)">PRÉSENT — ${data.location||''}</span></div>`;
+    items.forEach(it => { h += `<div class="baro-item"><span>${it.item||it.uniqueName||'—'}</span><span class="baro-price">${it.ducats||0}⚜ · ${(it.credits||0).toLocaleString()}cr</span></div>`; });
+    if ((data.inventory||[]).length > 14) h += `<div style="font-size:10px;color:var(--text-dim);text-align:center;margin-top:5px">+ ${data.inventory.length - 14} autres items</div>`;
+    el.innerHTML = h;
+  } else {
+    const act = parseExpiry(data.activation);
+    const actMs = act ? act.getTime() : 0;
+    timers['baro-t'] = {expiry: actMs, el: document.getElementById('baro-t')};
+    el.innerHTML = `<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><div class="baro-dot off"></div><span style="font-size:11px;color:var(--text-dim)">ABSENT</span></div><div class="arbi-s"><span class="arbi-l">Prochain passage dans</span><span class="arbi-v" style="color:var(--cyan)">${fmt(actMs - Date.now())}</span><span style="font-size:11px;color:var(--text-dim);margin-top:3px">${data.location||''}</span></div>`;
+  }
+}
+
+function renderArbi(data) {
+  const el = document.getElementById('arbi-body');
+  if (!data) { el.innerHTML = '<div class="err-msg">Indisponible</div>'; return; }
+  setTimer('arbi-t', data.expiry);
+  const extras = [data.archwing && '<span class="badge b-cyan">ARCHWING</span>', data.sharkwing && '<span class="badge b-cyan">SHARKWING</span>'].filter(Boolean).join(' ');
+  el.innerHTML = `<div class="arbi-row"><div class="arbi-s"><span class="arbi-l">Nœud</span><span class="arbi-v">${data.node||'—'}</span></div><div class="arbi-s"><span class="arbi-l">Mission</span><span class="arbi-v">${data.type||'—'}</span></div><div class="arbi-s"><span class="arbi-l">Faction</span><span class="arbi-v">${data.enemy||'—'}</span></div></div>${extras?`<div style="margin-top:8px;display:flex;gap:5px">${extras}</div>`:''}`;
+}
+
+function renderNW(data) {
+  const el = document.getElementById('nw-body');
+  if (!data || !data.activeChallenges) { el.innerHTML = '<div class="err-msg">Indisponible</div>'; return; }
+  if (data.expiry) setTimer('nw-t', data.expiry);
+  const ch = data.activeChallenges.filter(c => !c.isPermanent);
+  const daily = ch.filter(c => c.isDaily), weekly = ch.filter(c => !c.isDaily && !c.isElite), elite = ch.filter(c => c.isElite);
+  function grp(title, arr, color) {
+    if (!arr.length) return '';
+    let h = `<div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:${color};margin:10px 0 5px;font-family:'Rajdhani',sans-serif;font-weight:700">${title}</div>`;
+    arr.forEach(c => { h += `<div class="nw-ch"><div><div style="font-size:12px;color:var(--text)">${c.title||'—'}</div><div style="font-size:10px;color:var(--text-dim);margin-top:1px">${c.desc||''}</div></div><div class="nw-rep">+${(c.reputation||0).toLocaleString()}</div></div>`; });
+    return h;
+  }
+  el.innerHTML = `<div style="font-size:11px;color:var(--text-dim);margin-bottom:6px">${data.tag||''} — Saison ${data.season||'?'}</div>${grp('JOURNALIERS',daily,'var(--cyan)')}${grp('HEBDOMADAIRES',weekly,'var(--gold)')}${grp('ÉLITE',elite,'var(--red)')}`;
+}
+
+function renderInv(data) {
+  const el = document.getElementById('inv-body'), cnt = document.getElementById('inv-cnt');
+  if (!Array.isArray(data)) { el.innerHTML = '<div class="err-msg">Indisponible</div>'; return; }
+  const active = data.filter(i => !i.completed).slice(0,10);
+  cnt.textContent = active.length;
+  if (!active.length) { el.innerHTML = '<div class="loading" style="color:var(--green)">Aucune invasion active</div>'; return; }
+  el.innerHTML = active.map(inv => {
+    const pct = Math.round(Math.abs((inv.completion||0)*100));
+    // Attacker faction + reward
+    const attFaction = inv.attacker?.faction || inv.attackingFaction || '?';
+    const defFaction = inv.defender?.faction || inv.defendingFaction || '?';
+    const r1 = inv.attackerReward?.countedItems?.[0]?.key || inv.attackerReward?.asString || inv.attackerReward?.itemString || attFaction;
+    const r2 = inv.defenderReward?.countedItems?.[0]?.key || inv.defenderReward?.asString || inv.defenderReward?.itemString || defFaction;
+    const reward1 = r1 !== attFaction ? `<span style="color:var(--gold)">${r1}</span>` : `<span style="color:var(--text-dim)">${attFaction}</span>`;
+    const reward2 = r2 !== defFaction ? `<span style="color:var(--gold)">${r2}</span>` : `<span style="color:var(--text-dim)">${defFaction}</span>`;
+    return `<div class="inv-row">
+      <div style="font-size:12px;color:var(--text)">${inv.node||'—'} <span style="color:var(--text-dim);font-size:10px">${inv.desc||''}</span></div>
+      <div style="font-size:11px;margin-top:3px;display:flex;align-items:center;gap:5px">${reward1} <span style="color:var(--border2)">⟷</span> ${reward2}</div>
+      <div class="inv-bar-w"><div class="inv-bar" style="width:${pct}%"></div></div>
+    </div>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════
+// BUILDS V2
+// ═══════════════════════════════════════════════
+function parseTags(raw) {
+  if (!raw) return [];
+  return raw.split(/[,#]/)
+    .map(t => t.trim())
+    .filter(t => t && t.length > 0)
+    .slice(0, 10);
+}
+
+let builds = ld(K.builds) || [];
+builds = (builds || []).map(b => ({
+  ...b,
+  tags: Array.isArray(b.tags) ? b.tags.filter(t => t && typeof t === 'string') : []
+}));
+let bModal_id = null;
+let buildFilter = 'all';
+
+function openBuildModal(id=null) {
+  bModal_id = id;
+  document.getElementById('bm-title').textContent = id ? 'MODIFIER LE BUILD' : 'NOUVEAU BUILD';
+  if (id) {
+    const b = builds.find(x => x.id === id);
+    if (!b) return;
+    document.getElementById('b-name').value = b.name||'';
+    document.getElementById('b-type').value = b.type||'warframe';
+    document.getElementById('b-ctx').value = b.ctx||'';
+    document.getElementById('b-url').value = b.url||'';
+    document.getElementById('b-notes').value = b.notes||'';
+    document.getElementById('b-tags').value = Array.isArray(b.tags) ? b.tags.join(', ') : '';
+    parseOFUrl(b.url||'');
+  } else {
+    ['b-name','b-ctx','b-url','b-notes','b-tags'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('b-type').value = 'warframe';
+    document.getElementById('of-preview').style.display = 'none';
+  }
+  document.getElementById('build-modal').classList.add('open');
+  setTimeout(() => document.getElementById('b-name').focus(), 80);
+}
+
+function closeBModal() { document.getElementById('build-modal').classList.remove('open'); }
+
+function parseOFUrl(url) {
+  const prev = document.getElementById('of-preview');
+  if (!url || !url.includes('overframe.gg')) { prev.style.display = 'none'; return; }
+  const parts = url.split('/').filter(Boolean);
+  const idx = parts.indexOf('build');
+  if (idx >= 0 && parts[idx+2]) {
+    const slug = parts[idx+2].replace(/-/g,' ');
+    const buildName = parts[idx+3] ? parts[idx+3].replace(/-/g,' ') : '';
+    prev.style.display = 'block';
+    prev.innerHTML = `<span style="color:var(--cyan)">↗ Overframe détecté :</span> <span style="color:var(--text)">${slug}</span>${buildName ? ` — <span style="color:var(--text-mid);font-size:11px">${buildName.substring(0,60)}</span>` : ''}`;
+  } else {
+    prev.style.display = 'none';
+  }
+}
+
+async function saveBuild() {
+  const name = document.getElementById('b-name').value.trim();
+  if (!name) { document.getElementById('b-name').focus(); return; }
+  const url = document.getElementById('b-url').value.trim();
+  let imageName = '';
+  const tags = parseTags(document.getElementById('b-tags').value);
+  try {
+    const dbItem = await getItem(name);
+    imageName = dbItem?.imageName || '';
+  } catch(e) { /* ok, just no image */ }
+  const build = {
+    id: bModal_id || Date.now().toString(),
+    name, url,
+    type: document.getElementById('b-type').value,
+    ctx: document.getElementById('b-ctx').value.trim(),
+    notes: document.getElementById('b-notes').value.trim(),
+    tags,
+    imageName,
+    createdAt: bModal_id ? (builds.find(b=>b.id===bModal_id)?.createdAt || Date.now()) : Date.now()
+  };
+  if (bModal_id) {
+    builds = builds.map(b => b.id === bModal_id ? build : b);
+  } else {
+    builds.push(build);
+  }
+  sv(K.builds, builds);
+  renderBuilds();
+  closeBModal();
+}
+
+function deleteBuild(id, btn) {
+  if (btn.dataset.pending === '1') {
+    builds = builds.filter(b => b.id !== id);
+    sv(K.builds, builds);
+    renderBuilds();
+  } else {
+    btn.dataset.pending = '1';
+    btn.textContent = '✓?';
+    btn.style.color = 'var(--red)';
+    setTimeout(() => { if (btn.dataset.pending) { btn.dataset.pending=''; btn.textContent='🗑'; btn.style.color=''; } }, 2500);
+  }
+}
+
+function setBF(f) {
+  buildFilter = f;
+  document.querySelectorAll('[id^="bf-"]').forEach(b => b.classList.remove('act'));
+  const el = document.getElementById('bf-' + f);
+  if (el) el.classList.add('act');
+  renderBuilds();
+}
+
+let buildSort = 'date-desc';
+
+function renderBuilds() {
+  const grid = document.getElementById('builds-grid');
+  const q = document.getElementById('build-q').value.toLowerCase();
+  const tq = (document.getElementById('build-tag-q')?.value || '').toLowerCase();
+  buildSort = document.getElementById('build-sort')?.value || buildSort;
+  let list = builds;
+  if (buildFilter !== 'all') list = list.filter(b => b.type === buildFilter);
+  if (q) {
+    list = list.filter(b =>
+      b.name.toLowerCase().includes(q) ||
+      (b.ctx||'').toLowerCase().includes(q) ||
+      (b.notes||'').toLowerCase().includes(q)
+    );
+  }
+  if (tq) {
+    list = list.filter(b => Array.isArray(b.tags) && b.tags.some(t => t.toLowerCase().includes(tq)));
+  }
+  // Sort
+  if (buildSort === 'name') list = [...list].sort((a,b) => a.name.localeCompare(b.name));
+  else if (buildSort === 'date-asc') list = [...list].sort((a,b) => (a.createdAt||0) - (b.createdAt||0));
+  else list = [...list].sort((a,b) => (b.createdAt||0) - (a.createdAt||0));
+
+  if (!list.length) {
+    grid.innerHTML = `<div class="empty" style="grid-column:1/-1"><div class="ei">⚙️</div><p>${builds.length===0 ? 'Aucun build — clique sur + NOUVEAU BUILD' : 'Aucun résultat'}</p></div>`;
+    return;
+  }
+
+  grid.innerHTML = list.map(b => {
+    const img = b.imageName ? `<img class="bc-thumb" src="${imgUrl(b.imageName)}" onerror="this.style.display='none'" alt="">` : `<div class="bc-thumb-placeholder">⚙</div>`;
+    const ofType = OF_PATH[b.type] || 'warframes';
+    const ofSearch = `https://overframe.gg/builds/${ofType}/${encodeURIComponent(b.name.toLowerCase().replace(/\s+/g,'-'))}/`;
+    const myBuildBtn = b.url ? `<button class="of-link" data-action="open-url" data-url="${esc(b.url)}">↗ Mon build</button>` : '';
+    const commBtn = `<button class="of-link" data-action="open-url" data-url="${esc(ofSearch)}" style="border-color:var(--border);color:var(--text-dim)">👥 Communauté</button>`;
+    const isPinned_ = isPinned('build', b.id);
+    // Stats block
+    let statsHtml = '';
+    if (b.stats) {
+      statsHtml = `<div class="bc-stats">${Object.entries(b.stats).map(([k,v]) => `<div class="bc-stat"><div class="bc-stat-v">${v}</div><div class="bc-stat-k">${k}</div></div>`).join('')}</div>`;
+    } else if (b.url) {
+      statsHtml = `<button class="of-link" style="margin:0 0 8px;font-size:10px;color:var(--text-dim);border-color:var(--border)" data-action="fetch-stats" data-id="${b.id}">✨ Charger stats OF</button>`;
+    }
+    const tagsHtml = (b.tags && b.tags.length)
+      ? `<div class="bc-tags">${b.tags.map(t => `<span class="badge b-gray">${esc(t)}</span>`).join('')}</div>`
+      : '';
+    return `<div class="build-card" data-action="edit-build" data-id="${b.id}">
+      ${img}
+      <div class="bc-top">
+        <div class="bc-meta"><span class="badge ${TYPE_BADGE[b.type]||'b-cyan'}">${TYPE_LABEL[b.type]||b.type}</span>${b.ctx?`<span style="font-size:10px;color:var(--text-dim)">${b.ctx}</span>`:''}</div>
+        <div class="bc-name" style="margin-top:5px">${b.name}</div>
+      </div>
+      <div class="bc-body">
+        ${statsHtml}
+        ${tagsHtml}
+        <div class="bc-notes">${b.notes||'<span style="color:var(--text-dim);font-style:italic">Aucune note</span>'}</div>
+      </div>
+      <div class="bc-foot">
+        <div style="display:flex;gap:5px;flex-wrap:wrap">${myBuildBtn}${commBtn}</div>
+        <div class="bc-actions">
+          <button class="pin-btn ${isPinned_?'pinned':''}" data-action="pin-build" data-id="${b.id}">${isPinned_?'📌':'pin'}</button>
+          <button class="btn-icon del" data-action="delete-build" data-id="${b.id}">🗑</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════
+// PROGRESSION V2 (Warframes + Armes only)
+// ═══════════════════════════════════════════════
+const DEF_PROG = [
+  {id:'frames', title:'WARFRAMES À ACQUÉRIR', color:'var(--gold)', items:[]},
+  {id:'armes',  title:'ARMES À DÉBLOQUER',    color:'var(--cyan)', items:[]},
+];
+let progData = ld(K.prog) || DEF_PROG;
+// Migrate old data: remove quests/mastery sections if present
+progData = progData.filter(s => !['quests','mastery','divers'].includes(s.id));
+if (!progData.find(s => s.id === 'frames')) progData.unshift({id:'frames', title:'WARFRAMES À ACQUÉRIR', color:'var(--gold)', items:[]});
+if (!progData.find(s => s.id === 'armes'))  progData.push({id:'armes', title:'ARMES À DÉBLOQUER', color:'var(--cyan)', items:[]});
+
+function saveProg() { sv(K.prog, progData); }
+
+function renderProg() {
+  const wrap = document.getElementById('prog-wrap');
+  if (!wrap) return; // dead — prog-wrap removed from DOM
+  wrap.innerHTML = progData.map(sec => {
+    const done = sec.items.filter(i => i.done).length, total = sec.items.length;
+    const pct = total ? Math.round(done/total*100) : 0;
+    return `<div class="prog-sec" id="ps-${sec.id}">
+      <div class="prog-sec-head" onclick="toggleSec('${sec.id}')">
+        <div class="prog-sec-title" style="color:${sec.color}">${sec.title} <span class="prog-count" style="font-size:10px;color:var(--text-dim);font-family:'Exo 2',sans-serif;font-weight:400;letter-spacing:0">${done}/${total}</span></div>
+        <span class="prog-chev">▼</span>
+      </div>
+      <div class="prog-body">
+        ${total > 0 ? `<div class="prog-bar-w"><div class="prog-bar" style="width:${pct}%"></div></div>` : ''}
+        ${sec.items.map(item => `
+          <div class="prog-item ${item.done?'done':''}">
+            <div class="prog-cb ${item.done?'chk':''}" onclick="toggleProgItem('${sec.id}','${item.id}')"></div>
+            <div class="prog-item-txt" style="cursor:pointer" onclick="showProgItemResources('${item.name}')" title="Voir les ressources nécessaires">
+              <div class="prog-item-name" style="${item.done?'':'color:var(--text)'}">${item.name} <span style="font-size:9px;color:var(--text-dim);margin-left:2px">🔍</span></div>
+              ${item.note ? `<div class="prog-item-note">${item.note}</div>` : ''}
+            </div>
+            <button class="btn-icon del" onclick="removeProgItem('${sec.id}','${item.id}')">✕</button>
+          </div>`).join('')}
+        <div class="prog-add-row">
+          <div class="ac-wrap" style="flex:1">
+            <input class="prog-add-input" id="pi-${sec.id}" placeholder="Ajouter ${sec.id==='frames'?'une Warframe':'une arme'}..." autocomplete="off"
+              oninput="acProg(this.value,'${sec.id}')" onkeydown="acProgKey(event,'${sec.id}')">
+            <div class="ac-list" id="pac-${sec.id}" style="display:none"></div>
+          </div>
+          <button class="btn-add-sm" onclick="addProgItem('${sec.id}')">+ AJOUTER</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function acProg(q, secId) {
+  if (!q || q.length < 2) {
+    const list = document.getElementById(`pac-${secId}`);
+    if (list) list.style.display = 'none';
+    return;
+  }
+  searchItems(q, 10).then(results => {
+    const list = document.getElementById(`pac-${secId}`);
+    if (!list) return;
+    if (!results.length) { list.style.display = 'none'; return; }
+    list.style.display = 'block';
+    list._results = results;
+    list.innerHTML = results.map((item, i) => `
+      <div class="ac-item" data-progac-sec="${secId}" data-progac-idx="${i}">
+        <img src="${imgUrl(item.imageName)}" onerror="this.style.display='none'" alt="" style="width:28px;height:28px;object-fit:contain;background:var(--bg3);border-radius:3px;flex-shrink:0">
+        <div class="ac-item-info"><div class="ac-name">${item.name}</div><div class="ac-type">${item.type||''}</div></div>
+      </div>`).join('');
+  });
+}
+
+document.addEventListener('mousedown', e => {
+  const item = e.target.closest('[data-progac-sec]');
+  if (item) {
+    e.preventDefault();
+    const secId = item.dataset.progacSec;
+    const idx = parseInt(item.dataset.progacIdx);
+    const list = document.getElementById(`pac-${secId}`);
+    if (!list || !list._results) return;
+    const selected = list._results[idx];
+    document.getElementById(`pi-${secId}`).value = selected.name;
+    list.style.display = 'none';
+  }
+});
+
+function acProgKey(e, secId) {
+  const list = document.getElementById(`pac-${secId}`);
+  if (e.key === 'Escape') list.style.display = 'none';
+  if (e.key === 'Enter') { if (list.style.display !== 'none') { list.querySelector('.ac-item')?.click(); e.preventDefault(); } else addProgItem(secId); }
+}
+
+function selectProgItem(secId, idx) {
+  const list = document.getElementById(`pac-${secId}`);
+  const item = list._results[idx];
+  document.getElementById(`pi-${secId}`).value = item.name;
+  list.style.display = 'none';
+}
+
+async function addProgItem(secId) {
+  const input = document.getElementById(`pi-${secId}`);
+  const name = input.value.trim();
+  if (!name) return;
+  const dbItem = await getItem(name);
+  pendingProgItem = {secId, name, dbItem};
+  showProgModal(name, dbItem);
+}
+
+function showProgModal(name, dbItem) {
+  document.getElementById('pm-name').textContent = name;
+  document.getElementById('pm-type').textContent = dbItem?.type || '';
+  const imgEl = document.getElementById('pm-img');
+  if (dbItem?.imageName) { imgEl.src = imgUrl(dbItem.imageName); imgEl.style.display = ''; }
+  else imgEl.style.display = 'none';
+
+  const resEl = document.getElementById('pm-resources');
+  let html = '';
+  if (dbItem && dbItem.components && dbItem.components.length > 0) {
+    html += `<div style="margin-bottom:8px;font-size:11px;color:var(--text-dim)">Ressources nécessaires pour crafter :</div>`;
+    html += `<div class="res-grid">`;
+    function flatComponents(comps, depth=0) {
+      comps.forEach(c => {
+        if (c.name === 'Blueprint') return;
+        html += `<div class="res-item" style="padding-left:${depth*12}px"><span class="qty">${c.itemCount||1}×</span> <span>${c.name}</span></div>`;
+        if (c.components && c.components.length) flatComponents(c.components, depth+1);
+      });
+    }
+    flatComponents(dbItem.components);
+    html += `</div>`;
+    // Relics
+    const relics = (dbItem.drops||[]).filter(d => (d.location||'').toLowerCase().includes('relic'));
+    if (relics.length) {
+      html += `<div style="margin-top:10px;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);font-family:'Rajdhani',sans-serif;font-weight:700;margin-bottom:5px">RELIQUES</div>`;
+      relics.slice(0,8).forEach(r => {
+        const tier = ['Lith','Meso','Neo','Axi','Requiem'].find(t => (r.location||'').startsWith(t)) || '';
+        html += `<span class="relic-chip"><span class="badge b-${tier.toLowerCase()||'gray'}" style="margin-right:2px">${tier||'?'}</span>${r.location||'?'}</span>`;
+      });
+    }
+  } else {
+    html = `<div style="font-size:12px;color:var(--text-dim);text-align:center;padding:14px 0">Aucune donnée de craft dans la base — l'item sera ajouté normalement.</div>`;
+  }
+  resEl.innerHTML = html;
+  document.getElementById('pm-add-loot').checked = false;
+  document.getElementById('prog-modal').classList.add('open');
+}
+
+function closePModal() {
+  document.getElementById('prog-modal').classList.remove('open');
+  pendingProgItem = null;
+}
+
+function confirmProgAdd() {
+  if (!pendingProgItem) return;
+  const {secId, name, dbItem} = pendingProgItem;
+  const sec = progData.find(s => s.id === secId);
+  if (!sec) return;
+
+  // Add to progression
+  sec.items.push({id: Date.now().toString(), name, done: false, note: dbItem?.type||''});
+  saveProg(); renderProg();
+  const inp = document.getElementById(`pi-${secId}`);
+  if (inp) inp.value = '';
+
+  // Add item to Loot Tracker with full craftData (NOT exploded into materials)
+  if (document.getElementById('pm-add-loot').checked && dbItem) {
+    const existing = lootItems.find(l => l.name === name);
+    if (!existing) {
+      const craftData = extractCraftData(dbItem);
+      lootItems.push({
+        id: Date.now().toString(),
+        name,
+        cat: secId === 'frames' ? 'warframe' : (dbItem?.type?.toLowerCase().includes('melee') ? 'melee' : dbItem?.type?.toLowerCase().includes('primary') ? 'primary' : dbItem?.type?.toLowerCase().includes('secondary') ? 'secondary' : 'other'),
+        source: '',
+        priority: 'med',
+        status: 'pending',
+        notes: '',
+        craftData,
+        imageName: dbItem?.imageName || ''
+      });
+      sv(K.loot, lootItems);
+      renderLoot();
+    }
+  }
+
+  closePModal();
+}
+
+function toggleSec(id) {
+  document.getElementById('ps-' + id)?.classList.toggle('coll');
+}
+
+function toggleProgItem(secId, itemId) {
+  const sec = progData.find(s => s.id === secId);
+  const item = sec?.items.find(i => i.id === itemId);
+  if (!item) return;
+  const wasDone = item.done;
+  item.done = !item.done;
+  saveProg(); renderProg();
+
+  // When marking DONE: remove exclusive loot materials (not shared with other pending items)
+  if (!wasDone && item.done) {
+    const lootItem = lootItems.find(l => l.name === item.name);
+    if (lootItem) {
+      // Collect materials exclusive to this item
+      const myMats = new Set(Object.keys(lootItem.craftData?.materials || {}));
+      // Collect all materials needed by other non-done items
+      const otherMats = new Set();
+      lootItems.forEach(l => {
+        if (l.id !== lootItem.id && l.status !== 'done' && l.craftData?.materials) {
+          Object.keys(l.craftData.materials).forEach(m => otherMats.add(m));
+        }
+      });
+      // Remove materials only exclusive to this item (not in otherMats)
+      // (Just mark the main item as done — materials are computed from totals)
+      lootItem.status = 'done';
+      saveLoot(); renderLoot();
+    }
+  }
+}
+
+async function showProgItemResources(name) {
+  // Try loot tracker first, then fetch from API
+  const lootItem = lootItems.find(l => l.name === name);
+  let dbItem = null;
+
+  if (lootItem && lootItem.craftData) {
+    // Build a fake dbItem from stored loot data
+    dbItem = { imageName: lootItem.imageName, type: lootItem.cat, components: lootItem.craftData.components || [] };
+  } else {
+    // Fetch from API
+    dbItem = await getItem(name);
+  }
+
+  pendingProgItem = null; // view-only mode, no secId
+  const modal = document.getElementById('prog-modal');
+  document.querySelector('#prog-modal .modal-head .modal-title').textContent = `RESSOURCES — ${name.toUpperCase()}`;
+
+  // Show item info
+  const imgEl = document.getElementById('pm-img');
+  const imgUrl2 = dbItem?.imageName ? imgUrl(dbItem.imageName) : '';
+  imgEl.src = imgUrl2; imgEl.style.display = imgUrl2 ? '' : 'none';
+  document.getElementById('pm-name').textContent = name;
+  document.getElementById('pm-type').textContent = dbItem?.type || '';
+
+  // Show resources
+  const resEl = document.getElementById('pm-resources');
+  if (dbItem?.components && dbItem.components.length > 0) {
+    let html = `<div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin:6px 0 8px;font-family:'Rajdhani',sans-serif;font-weight:700">MATÉRIAUX DE FABRICATION</div>`;
+    html += `<div class="res-grid">`;
+    function renderResTree(comps) {
+      (comps||[]).forEach(c => {
+        if (!c.name || c.name === 'Blueprint') return;
+        const qty = c.itemCount || 1;
+        const isComp = c.components && c.components.length > 0;
+        html += `<div class="res-item" style="${isComp?'color:var(--gold)':''}"><span class="qty">${qty}×</span>${c.name}</div>`;
+        if (isComp) renderResTree(c.components);
+      });
+    }
+    renderResTree(dbItem.components);
+    html += `</div>`;
+
+    // Relics
+    const relics = (dbItem.drops||[]).filter(d => (d.location||'').toLowerCase().includes('relic'));
+    if (relics.length) {
+      html += `<div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin:12px 0 8px;font-family:'Rajdhani',sans-serif;font-weight:700">RELIQUES</div>`;
+      relics.slice(0,6).forEach(r => {
+        const tier = ['Lith','Meso','Neo','Axi','Requiem'].find(t => (r.location||'').startsWith(t)) || '';
+        html += `<span class="relic-chip"><span class="badge b-${tier.toLowerCase()||'gray'}" style="margin-right:2px">${tier||'?'}</span>${r.location||'?'}</span>`;
+      });
+    }
+    resEl.innerHTML = html;
+  } else {
+    resEl.innerHTML = `<div style="font-size:12px;color:var(--text-dim);text-align:center;padding:14px 0">Aucune donnée de craft disponible.</div>`;
+  }
+
+  // Hide checkbox, change footer to close only
+  document.getElementById('pm-add-loot').parentElement.style.display = 'none';
+  const foot = document.querySelector('#prog-modal .modal-foot');
+  foot.innerHTML = `<button class="btn-g" onclick="document.getElementById('prog-modal').classList.remove('open');document.getElementById('pm-add-loot').parentElement.style.display='';document.querySelector('#prog-modal .modal-foot').innerHTML='<button class=\\'btn-g\\' onclick=\\'closePModal()\\'>ANNULER</button><button class=\\'btn-p\\' onclick=\\'confirmProgAdd()\\'>CONFIRMER</button>'">FERMER</button>`;
+
+  modal.classList.add('open');
+}
+
+function removeProgItem(secId, itemId) {
+  const sec = progData.find(s => s.id === secId);
+  if (!sec) return;
+  sec.items = sec.items.filter(i => i.id !== itemId);
+  saveProg(); renderProg();
+}
+
+// ═══════════════════════════════════════════════
+// LOOT TRACKER V2 — REDESIGN
+// ═══════════════════════════════════════════════
+let lootItems = ld(K.loot) || [];
+lootItems = (lootItems || []).map(i => ({
+  ...i,
+  tags: Array.isArray(i.tags) ? i.tags.filter(t => t && typeof t === 'string') : []
+}));
+let lootFilter = 'all';
+
+function saveLoot() { sv(K.loot, lootItems); }
+function focusLoot() { document.getElementById('loot-name').focus(); }
+
+const CAT_KEYS = ['warframe','primary','secondary','melee','companion','archwing','mod','resource','other'];
+
+function setLF(f) {
+  lootFilter = f;
+  document.querySelectorAll('.lf').forEach(b => b.classList.remove('act'));
+  document.querySelector(`.lf[data-f="${f}"]`)?.classList.add('act');
+  renderLoot();
+}
+
+async function addLoot() {
+  const name = document.getElementById('loot-name').value.trim();
+  if (!name) { document.getElementById('loot-name').focus(); return; }
+  const dbItem = await getItem(name);
+  const craftData = dbItem ? extractCraftData(dbItem) : null;
+  const tags = parseTags(document.getElementById('loot-tags').value);
+
+  // Auto-detect category from API if possible
+  let cat = document.getElementById('loot-cat').value;
+  if (dbItem) {
+    const t = (dbItem.type||'').toLowerCase();
+    if (t.includes('warframe') || t.includes('frame')) cat = 'warframe';
+    else if (t.includes('primary') || t.includes('rifle') || t.includes('shotgun') || t.includes('sniper') || t.includes('bow')) cat = 'primary';
+    else if (t.includes('secondary') || t.includes('pistol') || t.includes('thrown')) cat = 'secondary';
+    else if (t.includes('melee') || t.includes('sword') || t.includes('blade') || t.includes('polearm') || t.includes('hammer')) cat = 'melee';
+    else if (t.includes('sentinel') || t.includes('companion') || t.includes('animal') || t.includes('kubrow') || t.includes('kavat')) cat = 'companion';
+    else if (t.includes('arch')) cat = 'archwing';
+    else if (t.includes('mod')) cat = 'mod';
+  }
+
+  const item = {
+    id: Date.now().toString(), name, cat,
+    source: document.getElementById('loot-src').value.trim(),
+    priority: document.getElementById('loot-prio').value,
+    status: 'pending',
+    notes: document.getElementById('loot-note').value.trim(),
+    craftData,
+    tags,
+    imageName: dbItem?.imageName || ''
+  };
+  lootItems.push(item);
+  saveLoot(); renderLoot();
+  ['loot-name','loot-src','loot-note','loot-tags'].forEach(id => document.getElementById(id).value = '');
+}
+
+function extractCraftData(dbItem) {
+  if (!dbItem) return null;
+  const parentName = dbItem.name || '';
+  const mats = {};
+
+  // Generic component names that need parent prefix
+  const GENERIC = new Set(['neuroptics','chassis','systems','carapace','cerebrum','blade','barrel','stock','receiver','grip','string','limb','lower limb','upper limb','gauntlet','boot','headpiece','blueprint']);
+
+  function needsPrefix(name) {
+    return GENERIC.has(name.toLowerCase()) || !name.toLowerCase().includes(' ');
+  }
+
+  function qualify(name) {
+    if (!parentName) return name;
+    if (name.toLowerCase().startsWith(parentName.toLowerCase())) return name;
+    if (needsPrefix(name)) return `${parentName} ${name}`;
+    return name;
+  }
+
+  function collect(comps) {
+    (comps||[]).forEach(c => {
+      if (!c.name || c.name === 'Blueprint') return;
+      const displayName = qualify(c.name);
+      const wikiName = c.name; // raw name for wiki URL (e.g. "Chassis", not "Nidus Chassis")
+      const isSubComp = c.components && c.components.length > 0;
+      const qty = c.itemCount || 1;
+      if (!isSubComp) {
+        if (mats[displayName]) mats[displayName].qty += qty;
+        else {
+          const relics = (c.drops||[]).filter(d => (d.location||'').toLowerCase().includes('relic'));
+          mats[displayName] = { qty, wikiName, source: relics[0]?.location || c.drops?.[0]?.location || '' };
+        }
+      } else {
+        if (!mats[displayName]) {
+          const relics = (c.drops||[]).filter(d => (d.location||'').toLowerCase().includes('relic'));
+          mats[displayName] = { qty, wikiName, source: relics[0]?.location || '', isComp: true };
+        }
+        collect(c.components);
+      }
+    });
+  }
+  collect(dbItem.components);
+
+  const itemRelics = (dbItem.drops||[]).filter(d => (d.location||'').toLowerCase().includes('relic'));
+  return {
+    components: dbItem.components || [],
+    materials: mats,
+    relics: itemRelics.slice(0,8),
+    imageName: dbItem.imageName
+  };
+}
+
+function setLootStatus(id, status) {
+  const item = lootItems.find(i => i.id === id);
+  if (!item) return;
+  item.status = status; saveLoot(); renderLoot();
+}
+
+function deleteLootItem(id, btn) {
+  if (btn && btn.dataset.pending === '1') {
+    lootItems = lootItems.filter(i => i.id !== id);
+    saveLoot(); renderLoot();
+  } else if (btn) {
+    btn.dataset.pending = '1';
+    btn.textContent = '✓?';
+    btn.style.color = 'var(--red)';
+    setTimeout(() => { if (btn.dataset.pending) { btn.dataset.pending=''; btn.textContent='🗑'; btn.style.color=''; } }, 2500);
+  }
+}
+
+function toggleCraft(id, btn) {
+  const row = document.getElementById('mat-' + id);
+  if (!row) return;
+  row.style.display = row.style.display === 'none' ? '' : 'none';
+  if (btn) btn.textContent = row.style.display === 'none' ? '▼ MATÉRIAUX' : '▲ MATÉRIAUX';
+}
+
+const PRIO_LABEL = {high:'Haute',med:'Moyenne',low:'Basse'};
+const PRIO_CLS = {high:'p-high',med:'p-med',low:'p-low'};
+
+function renderLoot() {
+  const craftSec = document.getElementById('loot-craft-section');
+  const totalsSec = document.getElementById('loot-totals-section');
+  const empty = document.getElementById('loot-empty');
+
+  let list = lootItems;
+  const q = (document.getElementById('loot-q')?.value || '').toLowerCase();
+  const tq = (document.getElementById('loot-tag-q')?.value || '').toLowerCase();
+  // Category filters
+  if (CAT_KEYS.includes(lootFilter)) {
+    if (lootFilter === 'other') {
+      list = list.filter(i => !CAT_KEYS.slice(0,-1).includes((i.cat||'').toLowerCase()));
+    } else {
+      list = list.filter(i => (i.cat||'').toLowerCase() === lootFilter);
+    }
+  } else if (lootFilter === 'farming') list = list.filter(i => i.status === 'farming');
+  else if (lootFilter === 'done')    list = list.filter(i => i.status === 'done');
+
+  if (q) {
+    list = list.filter(i =>
+      i.name.toLowerCase().includes(q) ||
+      (i.notes||'').toLowerCase().includes(q) ||
+      (i.source||'').toLowerCase().includes(q)
+    );
+  }
+  if (tq) {
+    list = list.filter(i => Array.isArray(i.tags) && i.tags.some(t => t.toLowerCase().includes(tq)));
+  }
+
+  // Snapshot open mat panels before re-render
+  const openMats = new Set();
+  craftSec.querySelectorAll('[id^="mat-"]').forEach(el => {
+    if (el.style.display !== 'none') openMats.add(el.id.slice(4));
+  });
+
+  if (!list.length) {
+    craftSec.innerHTML = '';
+    totalsSec.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+
+  const CAT_BADGE = {warframe:'b-gold',primary:'b-cyan',secondary:'b-cyan',melee:'b-red',companion:'b-green',archwing:'b-orange',mod:'b-purple',resource:'b-gray',other:'b-gray'};
+  const CAT_LABEL = {warframe:'Warframe',primary:'Primaire',secondary:'Secondaire',melee:'Mêlée',companion:'Compagnon',archwing:'Archwing',mod:'Mod',resource:'Ressource',other:'Autre'};
+
+  const sorted = [...list].sort((a,b) => {
+    const po = {high:0,med:1,low:2};
+    return (po[a.priority]||1) - (po[b.priority]||1);
+  });
+
+  let h = `<div class="loot-section-title">ITEMS À CRAFTER <span class="badge b-gold" style="margin-left:6px">${sorted.length}</span></div>
+  <table class="loot-tbl"><thead><tr>
+    <th style="width:36px"></th><th>ITEM</th><th>TYPE</th>
+    <th>PRIORITÉ</th><th>STATUT</th><th>MATÉRIAUX</th><th style="width:70px"></th>
+  </tr></thead><tbody>`;
+
+  sorted.forEach(item => {
+    const hasMats = item.craftData && Object.keys(item.craftData.materials||{}).length > 0;
+    const statusDone = item.status === 'done';
+    const catKey = (item.cat||'other').toLowerCase();
+    const catBadge = CAT_BADGE[catKey] || 'b-gray';
+    const catLabel = CAT_LABEL[catKey] || (item.cat||'—');
+    const tagsHtml = (item.tags && item.tags.length)
+      ? `<div class="loot-tags">${item.tags.map(t => `<span class="badge b-gray">${esc(t)}</span>`).join('')}</div>`
+      : '';
+
+    h += `<tr style="${statusDone?'opacity:.5':''}">
+      <td>${item.imageName ? `<img src="${imgUrl(item.imageName)}" style="width:28px;height:28px;object-fit:contain;border-radius:3px;background:var(--bg3)" onerror="this.style.display='none'">` : ''}</td>
+      <td style="font-weight:500;${statusDone?'text-decoration:line-through;color:var(--text-dim)':''}">${item.name}
+        ${item.notes?`<div style="font-size:10px;color:var(--text-dim)">${item.notes}</div>`:''}
+        ${tagsHtml}
+      </td>
+      <td><span class="badge ${catBadge}" style="font-size:8px">${catLabel}</span></td>
+      <td>
+        <select class="sel" style="padding:3px 6px;font-size:11px;width:auto;border:1px solid var(--border)" data-action="loot-priority" data-id="${item.id}">
+          <option value="high" ${item.priority==='high'?'selected':''} style="color:var(--red)">🔴 Haute</option>
+          <option value="med"  ${item.priority==='med' ?'selected':''} style="color:var(--orange)">🟠 Moyenne</option>
+          <option value="low"  ${item.priority==='low' ?'selected':''}>⚪ Basse</option>
+        </select>
+      </td>
+      <td>
+        <select class="sel" style="padding:3px 6px;font-size:11px;width:auto;border:1px solid var(--border)" data-action="loot-status" data-id="${item.id}">
+          <option value="pending" ${item.status==='pending'?'selected':''}>En attente</option>
+          <option value="farming" ${item.status==='farming'?'selected':''}>En farm 🔁</option>
+          <option value="done"    ${item.status==='done'   ?'selected':''}>Obtenu ✓</option>
+        </select>
+      </td>
+      <td style="white-space:nowrap">
+        ${hasMats?`<button class="craft-toggle" data-action="toggle-mat" data-id="${item.id}">▼ Détails</button>`:'<span style="font-size:10px;color:var(--text-dim)">—</span>'}
+      </td>
+      <td style="white-space:nowrap">
+        <button class="pin-btn ${pinnedWidgets.some(w=>w.type==='loot'&&w.refId===item.id)?'pinned':''}" data-action="pin-loot" data-id="${item.id}">📌</button>
+        <button class="btn-icon del" data-action="delete-loot" data-id="${item.id}">🗑</button>
+      </td>
+    </tr>`;
+
+    if (hasMats) {
+      const mats = item.craftData.materials;
+      const relics = item.craftData.relics || [];
+      h += `<tr><td colspan="7" style="padding:0">
+        <div id="mat-${item.id}" style="display:none;background:var(--bg3);border-top:1px solid var(--border)">
+          <div style="padding:10px 16px 14px">
+            <div style="display:flex;gap:20px;flex-wrap:wrap">
+              <div style="flex:2;min-width:200px">
+                <div class="craft-col-title">RESSOURCES NÉCESSAIRES <span style="font-size:9px;color:var(--text-dim)">(cliquer = wiki)</span></div>
+                <div class="mat-grid">`;
+      Object.entries(mats).forEach(([name, info]) => {
+        // Wiki URL: use raw component name if available, else strip parent prefix from display name
+        const rawName = info.wikiName || name;
+        const wikiUrl = `https://wiki.warframe.com/w/${encodeURIComponent(rawName.replace(/ /g,'_'))}`;
+        h += `<a class="mat-item" href="${wikiUrl}" target="_blank" title="Voir ${rawName} sur le wiki" style="text-decoration:none;cursor:pointer" onmouseover="this.style.borderColor='var(--cyan-dim)'" onmouseout="this.style.borderColor='var(--border)'">
+          <span class="mat-qty">${info.qty}×</span>
+          <div><div class="mat-name" style="color:${info.isComp?'var(--gold)':'var(--text-mid)'}">${name}</div>${info.source?`<div class="mat-relic">${info.source}</div>`:''}</div>
+          <span style="font-size:9px;color:var(--text-dim);margin-left:auto">wiki↗</span>
+        </a>`;
+      });
+      h += `</div></div>`;
+      if (relics.length) {
+        h += `<div style="flex:1;min-width:160px"><div class="craft-col-title">RELIQUES</div>`;
+        relics.forEach(r => {
+          const tier = ['Lith','Meso','Neo','Axi','Requiem'].find(t => (r.location||'').startsWith(t))||'';
+          const rar = r.rarity||'';
+          const rarBadge = rar==='Rare'?'b-gold':rar==='Uncommon'?'b-orange':'b-gray';
+          h += `<div style="margin-bottom:4px"><span class="badge b-${tier.toLowerCase()||'gray'}" style="margin-right:3px">${tier||'?'}</span><span style="font-size:10px;color:var(--text-mid)">${r.location||'?'}</span> <span class="badge ${rarBadge}">${rar}</span></div>`;
+        });
+        h += `</div>`;
+      }
+      h += `</div></div></div></td></tr>`;
+    }
+  });
+  h += `</tbody></table>`;
+  craftSec.innerHTML = h;
+  // Restore previously open mat panels
+  openMats.forEach(id => {
+    const panel = document.getElementById('mat-' + id);
+    if (panel) {
+      panel.style.display = '';
+      const btn = craftSec.querySelector(`[data-action="toggle-mat"][data-id="${id}"]`);
+      if (btn) btn.textContent = '▲ Fermer';
+    }
+  });
+
+  // TOTALS — aggregate raw materials from all non-done items
+  const totals = {};
+  lootItems.filter(i => i.status !== 'done' && i.craftData?.materials).forEach(item => {
+    Object.entries(item.craftData.materials).forEach(([name, info]) => {
+      if (!info.isComp) {
+        if (totals[name]) totals[name].qty += info.qty;
+        else totals[name] = { qty: info.qty, wikiName: info.wikiName || name };
+      }
+    });
+  });
+  if (Object.keys(totals).length) {
+    let th = `<div class="loot-totals">
+      <div class="loot-section-title" style="margin-bottom:0">TOTAL RESSOURCES MANQUANTES <span class="badge b-orange" style="margin-left:6px">${Object.keys(totals).length} types</span></div>
+      <div class="total-grid">`;
+    Object.entries(totals).sort((a,b)=>b[1].qty-a[1].qty).forEach(([name, info]) => {
+      const rawName = info.wikiName || name;
+      const wikiUrl = `https://wiki.warframe.com/w/${encodeURIComponent(rawName.replace(/ /g,'_'))}`;
+      th += `<a class="total-item" href="${wikiUrl}" target="_blank" title="Voir ${rawName} sur le wiki" style="text-decoration:none" onmouseover="this.style.borderColor='var(--cyan-dim)'" onmouseout="this.style.borderColor='var(--border)'">
+        <span class="total-qty">${info.qty}×</span><span class="total-name">${name}</span><span style="font-size:9px;color:var(--text-dim);margin-left:auto">wiki↗</span>
+      </a>`;
+    });
+    th += `</div></div>`;
+    totalsSec.innerHTML = th;
+  } else {
+    totalsSec.innerHTML = '';
+  }
+}
+
+// Legacy stubs
+function buildCraftPanel() { return ''; }
+function toggleCraftOLD() {}
+
+
+// ═══════════════════════════════════════════════
+// NEWS TAB
+// ═══════════════════════════════════════════════
+let newsLoaded = false;
+
+function renderNewsData(data, grid) {
+  const sorted = [...data].sort((a,b) => new Date(b.date) - new Date(a.date));
+  grid.innerHTML = sorted.slice(0, 24).map(n => {
+    const date = new Date(n.date).toLocaleDateString('fr-BE', {day:'2-digit',month:'short',year:'numeric'});
+    const img = n.imageLink || n.thumbnail || '';
+    const tags = [];
+    if (n.update)  tags.push('<span class="badge b-gold">UPDATE</span>');
+    if (n.prime)   tags.push('<span class="badge b-purple">PRIME</span>');
+    if (n.stream)  tags.push('<span class="badge b-cyan">STREAM</span>');
+    if (n.patch)   tags.push('<span class="badge b-green">PATCH</span>');
+    if (!tags.length) tags.push('<span class="badge b-gray">NEWS</span>');
+    return `<a class="news-card" href="${n.link||'#'}" target="_blank" rel="noopener">
+      ${img ? `<img class="news-img" src="${img}" alt="" loading="lazy" onerror="this.style.display='none'">` : ''}
+      <div class="news-body">
+        <div style="display:flex;gap:5px;flex-wrap:wrap">${tags.join('')}</div>
+        <div class="news-title">${n.message||n.translations?.en||'—'}</div>
+        <div class="news-date">${date}</div>
+      </div>
+      <div class="news-foot">↗ Voir sur warframe.com</div>
+    </a>`;
+  }).join('');
+}
+
+async function loadNews() {
+  const grid = document.getElementById('news-grid');
+  // Use sessionStorage cache (valid for the current tab session)
+  const cached = sessionStorage.getItem('wf2_news');
+  if (cached) {
+    try {
+      renderNewsData(JSON.parse(cached), grid);
+      newsLoaded = true;
+      return;
+    } catch { /* invalid cache — fall through to fetch */ }
+  }
+  grid.innerHTML = '<div class="loading" style="grid-column:1/-1">Chargement des news...</div>';
+  const ctrl = new AbortController();
+  const to = setTimeout(() => ctrl.abort(), 15000);
+  try {
+    const r = await fetch('https://api.warframestat.us/pc/news?language=en', {signal: ctrl.signal});
+    clearTimeout(to);
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const data = await r.json();
+    if (!Array.isArray(data) || !data.length) throw new Error('empty');
+    sessionStorage.setItem('wf2_news', JSON.stringify(data));
+    renderNewsData(data, grid);
+    newsLoaded = true;
+  } catch(e) {
+    clearTimeout(to);
+    grid.innerHTML = `<div class="err-msg" style="grid-column:1/-1;padding:30px">
+      Impossible de charger les news (${e.message})<br>
+      <a href="https://www.warframe.com/news" target="_blank" style="color:var(--cyan);margin-top:8px;display:inline-block">→ Ouvrir warframe.com/news</a>
+    </div>`;
+  }
+}
+
+// ═══════════════════════════════════════════════
+// NOTES & OBJECTIFS
+// ═══════════════════════════════════════════════
+let notes = ld(K.notes) || [];
+// Migrate old notes (plain {id,title,body}) to new format
+notes = notes.map(n => n.type ? n : {...n, type:'note'});
+
+function saveNotes() { sv(K.notes, notes); }
+
+function addBlock(type) {
+  const block = {id: Date.now().toString(), type, title: '', updatedAt: Date.now()};
+  if (type === 'note') block.body = '';
+  if (type === 'objective') block.items = [];
+  notes.push(block);
+  saveNotes(); renderNotes();
+  // Focus title of new card
+  setTimeout(() => {
+    const inputs = document.querySelectorAll('.note-ti,.obj-ti');
+    inputs[inputs.length - 1]?.focus();
+  }, 60);
+}
+
+// Legacy alias
+function addNote() { addBlock('note'); }
+
+function deleteNote(id, btn) {
+  if (btn && btn.dataset.pending === '1') {
+    notes = notes.filter(n => n.id !== id);
+    saveNotes(); renderNotes();
+  } else if (btn) {
+    btn.dataset.pending = '1';
+    btn.textContent = '✓?';
+    btn.style.color = 'var(--red)';
+    setTimeout(() => { if (btn.dataset.pending) { btn.dataset.pending=''; btn.textContent='🗑'; btn.style.color=''; } }, 2500);
+  }
+}
+
+function updNote(id, f, v) {
+  const n = notes.find(x => x.id === id);
+  if (!n) return;
+  n[f] = v; n.updatedAt = Date.now(); saveNotes();
+  // Live refresh dashboard if this note is pinned
+  if (isPinned('note', id)) renderDashboard();
+}
+
+function addObjItem(id) {
+  const block = notes.find(n => n.id === id);
+  if (!block) return;
+  const inp = document.getElementById(`oi-${id}`);
+  const txt = inp ? inp.value.trim() : '';
+  if (!txt) { inp?.focus(); return; }
+  block.items = block.items || [];
+  block.items.push({id: Date.now().toString(), text: txt, done: false});
+  block.updatedAt = Date.now();
+  saveNotes(); renderNotes();
+  // Re-focus add input
+  setTimeout(() => document.getElementById(`oi-${id}`)?.focus(), 40);
+}
+
+function toggleObjItem(blockId, itemId) {
+  const block = notes.find(n => n.id === blockId);
+  if (!block) return;
+  const item = (block.items||[]).find(i => i.id === itemId);
+  if (!item) return;
+  item.done = !item.done;
+  block.updatedAt = Date.now();
+  saveNotes(); renderNotes();
+  if (isPinned('note', blockId)) renderDashboard();
+}
+
+function deleteObjItem(blockId, itemId) {
+  const block = notes.find(n => n.id === blockId);
+  if (!block) return;
+  block.items = (block.items||[]).filter(i => i.id !== itemId);
+  block.updatedAt = Date.now();
+  saveNotes(); renderNotes();
+  if (isPinned('note', blockId)) renderDashboard();
+}
+
+function esc(s) { if (!s) return ''; return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+function renderNotes() {
+  const grid = document.getElementById('notes-grid');
+  const q = (document.getElementById('notes-q')?.value || '').toLowerCase().trim();
+  let list = notes;
+  if (q) list = notes.filter(n => (n.title||'').toLowerCase().includes(q) || (n.body||'').toLowerCase().includes(q) || (n.items||[]).some(i => i.text.toLowerCase().includes(q)));
+  if (!list.length) {
+    grid.innerHTML = q
+      ? `<div class="empty" style="grid-column:1/-1;column-span:all"><div class="ei">🔍</div><p>Aucun résultat pour "${q}"</p></div>`
+      : `<div class="empty" style="grid-column:1/-1;column-span:all"><div class="ei">📝</div><p>Aucun bloc — crée une note libre ou une liste d'objectifs</p></div>`;
+    return;
+  }
+
+  grid.innerHTML = list.map(n => {
+    const date = new Date(n.updatedAt||Date.now()).toLocaleDateString('fr-BE');
+    const isPinned_ = isPinned('note', n.id);
+    const headBtns = `<div style="display:flex;gap:4px;flex-shrink:0">
+      <button class="pin-btn ${isPinned_?'pinned':''}" data-action="pin-note" data-id="${n.id}">${isPinned_?'📌':'pin'}</button>
+      <button class="btn-icon del" data-action="delete-note" data-id="${n.id}">🗑</button>
+    </div>`;
+
+    if (n.type === 'objective') {
+      const items = n.items || [];
+      const done = items.filter(i => i.done).length;
+      const total = items.length;
+      const pct = total ? Math.round(done/total*100) : 0;
+      return `<div class="obj-card">
+        <div class="obj-head">
+          <span style="font-size:9px;color:var(--cyan);letter-spacing:1.5px;font-family:'Rajdhani',sans-serif;font-weight:700;margin-right:6px;flex-shrink:0">☑</span>
+          <input class="obj-ti" placeholder="Titre de l'objectif..." value="${esc(n.title)}" data-action="note-title" data-id="${n.id}">
+          ${headBtns}
+        </div>
+        ${total > 0 ? `<div class="obj-progress"><div class="obj-progress-bar" style="width:${pct}%"></div></div>` : ''}
+        <div class="obj-body">
+          ${items.map(item => `
+            <div class="obj-item ${item.done?'done':''}">
+              <div class="obj-cb ${item.done?'chk':''}" onclick="toggleObjItem('${n.id}','${item.id}')"></div>
+              <span class="obj-item-txt">${esc(item.text)}</span>
+              <button class="obj-item-del" onclick="deleteObjItem('${n.id}','${item.id}')">✕</button>
+            </div>`).join('')}
+          <div class="obj-add-row">
+            <input class="obj-add-input" id="oi-${n.id}" placeholder="Ajouter un élément..." onkeydown="if(event.key==='Enter'){addObjItem('${n.id}');event.preventDefault();}">
+            <button class="btn-add-sm" onclick="addObjItem('${n.id}')">+</button>
+          </div>
+        </div>
+        <div class="note-foot">
+          <span class="note-date">Modifié ${date}</span>
+          ${total > 0 ? `<span class="obj-count">${done}/${total}</span>` : ''}
+        </div>
+      </div>`;
+    }
+
+    // Default: plain note
+    return `<div class="note-card">
+      <div class="note-head">
+        <span style="font-size:9px;color:var(--gold);letter-spacing:1.5px;font-family:'Rajdhani',sans-serif;font-weight:700;margin-right:6px;flex-shrink:0">✎</span>
+        <input class="note-ti" placeholder="Titre..." value="${esc(n.title)}" data-action="note-title" data-id="${n.id}">
+        ${headBtns}
+      </div>
+      <textarea class="note-ta" placeholder="Notes libres..." data-action="note-body" data-id="${n.id}">${esc(n.body||'')}</textarea>
+      <div class="note-foot"><span class="note-date">Modifié ${date}</span></div>
+    </div>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════
+// CLOUD SYNC (Google Apps Script)
+// ═══════════════════════════════════════════════
+const DEFAULT_CLOUD_URL = 'https://script.google.com/macros/s/AKfycbyZzwEti_yHk6atyTgNB4j2qGqasezGJob3lRgzCD6mBR-LD0eBbD2G1xrFHnk0gdbb/exec';
+let cloudAutoTimer = null;
+
+function getCloudUrl() {
+  return localStorage.getItem('wf2_cloud_url') || DEFAULT_CLOUD_URL;
+}
+
+function updateCloudStatus(state) {
+  const el = document.getElementById('cloud-status');
+  if (!el) return;
+  if (state === 'ok')   { el.textContent = '☁✓'; el.title = 'Cloud sync OK'; el.style.color = 'var(--green)'; }
+  else if (state === 'err')  { el.textContent = '☁✗'; el.title = 'Erreur cloud sync'; el.style.color = 'var(--red)'; }
+  else if (state === 'busy') { el.textContent = '☁…'; el.title = 'Sync en cours...'; el.style.color = 'var(--gold)'; }
+  else { el.textContent = '☁'; el.title = 'Cloud sync — cliquer pour configurer'; el.style.color = 'var(--text-dim)'; }
+}
+
+function saveCloudConfig() {
+  const inp = document.getElementById('cloud-url-input');
+  const url = inp ? inp.value.trim() : '';
+  if (!url) { showIOMsg('URL invalide.', 'red'); return; }
+  localStorage.setItem('wf2_cloud_url', url);
+  showIOMsg('✓ URL sauvegardée.', 'green');
+  updateCloudStatus(null); // will be updated on next sync
+}
+
+function setCloudAuto(checked) {
+  localStorage.setItem('wf2_cloud_auto', checked ? '1' : '0');
+  if (checked) {
+    if (!cloudAutoTimer) cloudAutoTimer = setInterval(() => cloudSave(true), 5 * 60 * 1000);
+  } else {
+    clearInterval(cloudAutoTimer);
+    cloudAutoTimer = null;
+  }
+}
+
+async function cloudSave(silent = false) {
+  const url = getCloudUrl();
+  if (!url) { if (!silent) showIOMsg('Pas d\'URL configurée.', 'red'); return; }
+  updateCloudStatus('busy');
+  try {
+    await fetch(url, {
+      method: 'POST',
+      mode: 'no-cors',
+      body: JSON.stringify(getAllData())
+    });
+    updateCloudStatus('ok');
+    if (!silent) showIOMsg('✓ Données sauvegardées dans le cloud !', 'green');
+  } catch(e) {
+    updateCloudStatus('err');
+    if (!silent) showIOMsg('Erreur sauvegarde cloud: ' + e.message, 'red');
+  }
+}
+
+async function cloudLoad(manual = false) {
+  const url = getCloudUrl();
+  if (!url) { if (manual) showIOMsg('Pas d\'URL configurée.', 'red'); return; }
+  updateCloudStatus('busy');
+  try {
+    const r = await fetch(url + '?v=' + Date.now());
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const text = await r.text();
+    if (!text || text.trim() === '{}' || text.trim() === '') {
+      updateCloudStatus('ok');
+      return;
+    }
+    const data = JSON.parse(text);
+    if (!data || data.v === undefined) throw new Error('Format invalide');
+    applyImport(data);
+    updateCloudStatus('ok');
+    if (manual) showIOMsg('✓ Données chargées depuis le cloud !', 'green');
+  } catch(e) {
+    updateCloudStatus('err');
+    if (manual) showIOMsg('Erreur chargement cloud: ' + e.message, 'red');
+  }
+}
+
+function copyCloudCode() {
+  const el = document.getElementById('cloud-code-block');
+  if (!el) return;
+  navigator.clipboard.writeText(el.textContent).then(
+    () => showIOMsg('✓ Code copié !', 'green'),
+    () => showIOMsg('Copie impossible — sélectionne manuellement le code.', 'red')
+  );
+}
+
+// ═══════════════════════════════════════════════
+// EXPORT / IMPORT
+// ═══════════════════════════════════════════════
+function getAllData() {
+  return {v:2, exportedAt: new Date().toISOString(), builds, prog: progData, loot: lootItems, notes, pins: pinnedWidgets};
+}
+
+function openIO() { document.getElementById('io-modal').classList.add('open'); document.getElementById('io-msg').style.display='none'; }
+function closeIO() { document.getElementById('io-modal').classList.remove('open'); }
+function openFAQ() { document.getElementById('faq-modal').classList.add('open'); }
+function closeFAQ() { document.getElementById('faq-modal').classList.remove('open'); }
+function toggleTheme() {
+  const html = document.documentElement;
+  const next = html.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+  html.setAttribute('data-theme', next === 'light' ? 'light' : '');
+  try { localStorage.setItem('wf2_theme', next); } catch {}
+  const btn = document.getElementById('theme-btn');
+  if (btn) btn.textContent = next === 'light' ? '☀' : '🌓';
+  if (btn) btn.title = next === 'light' ? 'Passer en mode clair' : 'Passer en mode sombre';
+}
+
+function exportData() {
+  const json = JSON.stringify(getAllData(), null, 2);
+  const blob = new Blob([json], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = `tenno-companion-${new Date().toISOString().slice(0,10)}.json`;
+  a.click(); URL.revokeObjectURL(url);
+}
+
+function copyExport() {
+  navigator.clipboard.writeText(JSON.stringify(getAllData(), null, 2)).then(() => showIOMsg('Copié dans le presse-papiers !', 'green'));
+}
+
+function applyImport(data) {
+  if (!data || data.v === undefined) { showIOMsg('Fichier invalide ou format non reconnu.', 'red'); return; }
+  if (data.builds)   {
+    builds = (data.builds || []).map(b => ({
+      ...b,
+      tags: Array.isArray(b.tags) ? b.tags.filter(t => t && typeof t === 'string') : []
+    }));
+    sv(K.builds, builds); renderBuilds();
+  }
+  if (data.prog)     { progData = data.prog; sv(K.prog, progData); }
+  if (data.loot)     {
+    lootItems = (data.loot || []).map(i => ({
+      ...i,
+      tags: Array.isArray(i.tags) ? i.tags.filter(t => t && typeof t === 'string') : []
+    }));
+    sv(K.loot, lootItems); renderLoot();
+  }
+  if (data.notes)    { notes = data.notes; sv(K.notes, notes); renderNotes(); }
+  if (data.pins)     { pinnedWidgets = data.pins; sv('wf2_pins', pinnedWidgets); }
+  renderDashboard();
+  showIOMsg('✓ Import réussi ! Toutes les données ont été restaurées.', 'green');
+}
+
+function importData(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    let parsed;
+    try { parsed = JSON.parse(e.target.result); }
+    catch { showIOMsg('Fichier illisible — pas un JSON valide.', 'red'); return; }
+    applyImport(parsed);
+  };
+  reader.readAsText(file);
+  input.value = '';
+}
+
+function importFromPaste() {
+  const txt = document.getElementById('io-paste').value.trim();
+  if (!txt) { showIOMsg('Colle ton JSON d\'abord.', 'red'); return; }
+  try { applyImport(JSON.parse(txt)); document.getElementById('io-paste').value = ''; }
+  catch { showIOMsg('JSON invalide.', 'red'); }
+}
+
+function resetAllData(btn) {
+  if (btn.dataset.pending === '1') {
+    // Confirmed — wipe everything
+    builds = []; lootItems = []; notes = [];
+    progData = JSON.parse(JSON.stringify(DEF_PROG));
+    pinnedWidgets = [];
+    [K.builds, K.prog, K.loot, K.notes, 'wf2_pins'].forEach(k => localStorage.removeItem(k));
+    renderBuilds(); renderLoot(); renderNotes(); renderDashboard();
+    btn.dataset.pending = '';
+    btn.textContent = '🗑 RÉINITIALISER TOUTES LES DONNÉES';
+    btn.style.background = '';
+    showIOMsg('✓ Toutes les données ont été effacées.', 'green');
+  } else {
+    btn.dataset.pending = '1';
+    btn.textContent = '⚠ CONFIRMER — cliquer une 2ème fois pour effacer';
+    btn.style.background = 'rgba(255,58,58,.12)';
+    setTimeout(() => {
+      if (btn.dataset.pending) {
+        btn.dataset.pending = '';
+        btn.textContent = '🗑 RÉINITIALISER TOUTES LES DONNÉES';
+        btn.style.background = '';
+      }
+    }, 3000);
+  }
+}
+
+function showIOMsg(msg, color) {
+  const el = document.getElementById('io-msg');
+  el.textContent = msg;
+  el.style.display = 'block';
+  el.style.background = color === 'green' ? 'rgba(57,232,122,.1)' : 'rgba(255,58,58,.1)';
+  el.style.color = color === 'green' ? 'var(--green)' : 'var(--red)';
+  el.style.border = `1px solid ${color === 'green' ? 'var(--green-dim)' : 'var(--red-dim)'}`;
+}
+
+// ═══════════════════════════════════════════════
+// OVERFRAME STATS FETCH (via Claude API)
+// ═══════════════════════════════════════════════
+async function fetchBuildStats(buildId, btn) {
+  const build = builds.find(b => b.id === buildId);
+  if (!build || !build.url) return;
+  if (btn) { btn.textContent = '⏳ Chargement...'; btn.disabled = true; }
+
+  const payload = {
+    model: 'claude-sonnet-4-20250514',
+    max_tokens: 1000,
+    tools: [{"type":"web_search_20250305","name":"web_search"}],
+    messages: [{
+      role: 'user',
+      content: `Visit this Overframe.gg build URL and extract the key stats: ${build.url}
+Return ONLY a JSON object (no markdown, no explanation) with at most 6 key stats.
+Example format: {"DPS":"2.4M","Durabilité":"98%","Portée":"145%","Puissance":"267%"}
+Use the actual numbers from the build. If it's a Warframe, include: Durabilité (EHP), Puissance, Portée, Efficacité, Durée.
+If it's a weapon: DPS, Statut, Critique, Vitesse de tir. Keep values short (numbers + unit only).`
+    }]
+  };
+
+  // Requires local proxy (start_server.py on port 8787)
+  try {
+    const resp = await fetch('http://localhost:8787/api/claude', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(payload)
+    });
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    const data = await resp.json();
+    if (data.error) throw new Error(data.error);
+    const text = (data.content||[]).filter(c => c.type === 'text').map(c => c.text).join('');
+    const clean = text.replace(/```json|```/g,'').trim();
+    build.stats = JSON.parse(clean);
+    sv(K.builds, builds);
+    renderBuilds();
+  } catch(e) {
+    if (btn) {
+      btn.textContent = '⚠ Proxy requis';
+      btn.disabled = false;
+      btn.title = `Lance start_server.py pour activer cette fonctionnalité.\nErreur: ${e.message}`;
+    }
+  }
+}
+// ═══════════════════════════════════════════════
+// PINS & DASHBOARD — new widget system
+// ═══════════════════════════════════════════════
+// Migrate old format {builds:[], notes:[]} → array
+(function migratePins() {
+  const old = ld('wf2_pins');
+  if (old && Array.isArray(old)) { /* already new format */ return; }
+  if (old && (old.builds || old.notes)) {
+    const migrated = [];
+    (old.builds||[]).forEach(id => migrated.push({uid: 'b'+id, type:'build', refId:id}));
+    (old.notes||[]).forEach(id => migrated.push({uid: 'n'+id, type:'note', refId:id}));
+    sv('wf2_pins', migrated);
+  }
+})();
+
+let pinnedWidgets = ld('wf2_pins') || [];
+// Keep old pinnedItems as alias for backward-compat references
+let pinnedItems = {
+  get builds() { return pinnedWidgets.filter(w=>w.type==='build').map(w=>w.refId); },
+  get notes()  { return pinnedWidgets.filter(w=>w.type==='note').map(w=>w.refId); }
+};
+
+// Cached WS data for dashboard compact widgets
+const wsCache = {};
+
+function savePins() { sv('wf2_pins', pinnedWidgets); }
+
+function isPinned(type, refId) {
+  return pinnedWidgets.some(w => w.type === type && w.refId === refId);
+}
+
+function togglePin(type, refId) {
+  const idx = pinnedWidgets.findIndex(w => w.type === type && w.refId === refId);
+  if (idx >= 0) {
+    pinnedWidgets.splice(idx, 1);
+  } else {
+    const uid = type[0] + refId + Date.now();
+    pinnedWidgets.push({uid, type, refId});
+  }
+  savePins();
+  renderDashboard();
+  if (type === 'build') renderBuilds();
+  if (type === 'note')  renderNotes();
+  if (type === 'loot')  renderLoot();
+  // update WS pin buttons
+  document.querySelectorAll('[data-action="pin-ws"]').forEach(btn => {
+    const id = btn.dataset.id;
+    btn.classList.toggle('pinned', isPinned('ws', id));
+    btn.textContent = isPinned('ws', id) ? '📌' : 'pin';
+  });
+}
+
+// ── Dashboard reorder state ──
+let reorderMode = false;
+let dragSrcIdx = null;
+
+function toggleReorderMode() {
+  reorderMode = !reorderMode;
+  const btn = document.getElementById('dash-reorder-btn');
+  if (btn) {
+    btn.textContent = reorderMode ? '✓ TERMINER' : '⠿ RÉORGANISER';
+    btn.style.color = reorderMode ? 'var(--green)' : '';
+    btn.style.borderColor = reorderMode ? 'var(--green-dim)' : '';
+  }
+  renderDashboard();
+}
+
+// ── Build compact widget ──
+function buildWidget(b, w) {
+  const isPinBtn = reorderMode
+    ? `<span class="drag-handle" title="Glisser pour réorganiser">⠿</span>`
+    : `<button class="pin-btn pinned" data-action="pin-build" data-id="${b.id}">📌 Retirer</button>`;
+  return `<div class="widget ${reorderMode?'dragging-mode':''}" draggable="${reorderMode}" data-wuid="${w.uid}" data-widx="${pinnedWidgets.indexOf(w)}">
+    <div class="widget-head">
+      ${reorderMode?'<span class="drag-handle">⠿</span>':''}
+      <span class="widget-title">⚙ ${esc(b.name)}</span>
+      <div style="display:flex;gap:5px;align-items:center">
+        <span class="badge ${TYPE_BADGE[b.type]||'b-cyan'}" style="font-size:8px">${TYPE_LABEL[b.type]||b.type}</span>
+        ${!reorderMode?`<button class="widget-nav" data-action="go-tab" data-tab="builds" title="Ouvrir onglet Builds">↗</button>`:''}
+        ${isPinBtn}
+      </div>
+    </div>
+    <div class="widget-body">
+      ${b.imageName?`<img src="${imgUrl(b.imageName)}" style="width:36px;height:36px;object-fit:contain;border-radius:4px;background:var(--bg3);float:right;margin-left:8px" onerror="this.style.display='none'">`:'' }
+      ${b.ctx?`<div style="font-size:10px;color:var(--text-dim);margin-bottom:5px">${esc(b.ctx)}</div>`:''}
+      ${b.stats?`<div class="bc-stats" style="margin:0 0 6px">${Object.entries(b.stats).map(([k,v])=>`<div class="bc-stat"><div class="bc-stat-v">${v}</div><div class="bc-stat-k">${k}</div></div>`).join('')}</div>`:''}
+      <div style="font-size:12px;color:var(--text-mid)">${b.notes||''}</div>
+      ${b.url?`<button class="of-link" style="margin-top:8px" data-action="open-url" data-url="${esc(b.url)}">↗ Overframe</button>`:''}
+    </div>
+  </div>`;
+}
+
+// ── Note/Objective compact widget ──
+function noteWidget(n, w) {
+  const isPinBtn = reorderMode
+    ? `<span class="drag-handle">⠿</span>`
+    : `<button class="pin-btn pinned" data-action="pin-note" data-id="${n.id}">📌 Retirer</button>`;
+  let bodyHtml = '';
+  if (n.type === 'objective') {
+    const items = n.items||[];
+    const done = items.filter(i=>i.done).length;
+    const pct = items.length ? Math.round(done/items.length*100) : 0;
+    bodyHtml = `<div style="height:2px;background:rgba(255,255,255,.05);border-radius:1px;margin-bottom:8px"><div style="height:2px;background:linear-gradient(90deg,var(--cyan-dim),var(--cyan));width:${pct}%;border-radius:1px;transition:width .3s"></div></div>`
+      + items.slice(0,7).map(i=>`<div style="display:flex;align-items:center;gap:6px;padding:3px 0;font-size:12px;color:${i.done?'var(--text-dim)':'var(--text)'}">
+        <span style="width:12px;height:12px;border:1.5px solid ${i.done?'var(--cyan)':'var(--border2)'};border-radius:2px;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:${i.done?'var(--cyan)':'none'};font-size:8px;color:#060e0a">${i.done?'✓':''}</span>
+        <span style="${i.done?'text-decoration:line-through':''}">${esc(i.text)}</span>
+      </div>`).join('')
+      + (items.length>7?`<div style="font-size:10px;color:var(--text-dim);margin-top:4px">+ ${items.length-7} autres</div>`:'')
+      + `<div style="font-size:10px;color:var(--cyan);margin-top:6px">${done}/${items.length} complétés</div>`;
+  } else {
+    bodyHtml = `<div style="font-size:12px;color:var(--text-mid);white-space:pre-wrap;word-break:break-word">${esc(n.body||'')}</div>`;
+  }
+  const icon = n.type==='objective'?'☑':'📝';
+  return `<div class="widget ${reorderMode?'dragging-mode':''}" draggable="${reorderMode}" data-wuid="${w.uid}" data-widx="${pinnedWidgets.indexOf(w)}">
+    <div class="widget-head">
+      ${reorderMode?'<span class="drag-handle">⠿</span>':''}
+      <span class="widget-title">${icon} ${esc(n.title)||(n.type==='objective'?'OBJECTIF':'NOTE')}</span>
+      <div style="display:flex;gap:4px;align-items:center">
+        ${!reorderMode?`<button class="widget-nav" data-action="go-tab" data-tab="notes" title="Ouvrir onglet Notes">↗</button>`:''}
+        ${isPinBtn}
+      </div>
+    </div>
+    <div class="widget-body">${bodyHtml}</div>
+  </div>`;
+}
+
+// ── Loot compact widget ──
+function lootWidget(item, w) {
+  const isPinBtn = reorderMode
+    ? `<span class="drag-handle">⠿</span>`
+    : `<button class="pin-btn pinned" data-action="pin-loot" data-id="${item.id}">📌 Retirer</button>`;
+  const PRIO_COLOR = {high:'var(--red)',med:'var(--orange)',low:'var(--text-dim)'};
+  const mats = item.craftData?.materials ? Object.entries(item.craftData.materials).slice(0,4) : [];
+  return `<div class="widget ${reorderMode?'dragging-mode':''}" draggable="${reorderMode}" data-wuid="${w.uid}" data-widx="${pinnedWidgets.indexOf(w)}">
+    <div class="widget-head">
+      ${reorderMode?'<span class="drag-handle">⠿</span>':''}
+      <span class="widget-title">🎒 ${esc(item.name)}</span>
+      <div style="display:flex;gap:4px;align-items:center">
+        ${!reorderMode?`<button class="widget-nav" data-action="go-tab" data-tab="loot" title="Ouvrir onglet Loot">↗</button>`:''}
+        ${isPinBtn}
+      </div>
+    </div>
+    <div class="widget-body">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+        ${item.imageName?`<img src="${imgUrl(item.imageName)}" style="width:32px;height:32px;object-fit:contain;border-radius:3px;background:var(--bg3)" onerror="this.style.display='none'">`:'' }
+        <div>
+          <div style="font-size:10px;color:${PRIO_COLOR[item.priority]||'var(--text-dim)'}">Priorité ${item.priority==='high'?'Haute':item.priority==='med'?'Moyenne':'Basse'}</div>
+          <div style="font-size:10px;color:${item.status==='done'?'var(--green)':item.status==='farming'?'var(--cyan)':'var(--text-dim)'}">${item.status==='done'?'Obtenu ✓':item.status==='farming'?'En farm 🔁':'En attente'}</div>
+        </div>
+      </div>
+      ${mats.length?`<div style="font-size:10px;color:var(--text-dim);margin-bottom:4px">Ressources nécessaires :</div>`+'<div style="display:flex;flex-wrap:wrap;gap:4px">'+mats.map(([name,info])=>`<span style="font-size:10px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:3px;padding:1px 6px;color:var(--text-mid)"><span style="color:var(--gold);font-weight:600">${info.qty}×</span> ${name}</span>`).join('')+(Object.keys(item.craftData.materials).length>4?`<span style="font-size:10px;color:var(--text-dim)">+${Object.keys(item.craftData.materials).length-4}</span>`:'')+'</div>':''}
+    </div>
+  </div>`;
+}
+
+// ── WS compact widget ──
+const WS_TITLES = {fissures:'VOID FISSURES',sortie:'SORTIE',baro:"BARO KI'TEER",arbi:'ARBITRATION',nightwave:'NIGHTWAVE',invasions:'INVASIONS'};
+const WS_ICONS = {fissures:'💠',sortie:'🔱',baro:'⚜',arbi:'⚡',nightwave:'📡',invasions:'⚔'};
+
+function wsWidget(wsId, w) {
+  const isPinBtn = reorderMode
+    ? `<span class="drag-handle">⠿</span>`
+    : `<button class="pin-btn pinned" data-action="pin-ws" data-id="${wsId}">📌 Retirer</button>`;
+  const data = wsCache[wsId];
+  let bodyHtml = '';
+  if (!data) {
+    bodyHtml = `<div style="font-size:11px;color:var(--text-dim);text-align:center;padding:10px 0">Chargement...</div>`;
+  } else if (wsId === 'fissures') {
+    const active = Array.isArray(data) ? data.filter(f=>!f.isStorm&&new Date(f.expiry)>Date.now()) : [];
+    bodyHtml = `<div style="font-size:11px;color:var(--text-dim);margin-bottom:6px">${active.length} fissure${active.length>1?'s':''} active${active.length>1?'s':''}</div>`
+      + active.slice(0,4).map(f=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:4px 6px;background:rgba(255,255,255,.025);border-radius:3px;margin-bottom:3px;font-size:11px"><span>${f.node||'—'}</span><span class="badge ${TIER_CLS[f.tier]||'b-cyan'}" style="font-size:8px">${f.tier}</span></div>`).join('')
+      + (active.length>4?`<div style="font-size:10px;color:var(--text-dim);text-align:center">+${active.length-4}</div>`:'');
+  } else if (wsId === 'sortie') {
+    if (!data.variants) { bodyHtml = '<div style="font-size:11px;color:var(--text-dim)">Indisponible</div>'; }
+    else bodyHtml = `<div style="font-size:11px;color:var(--text-dim);margin-bottom:6px">${data.faction||''}</div>`
+      + data.variants.map((v,i)=>`<div style="font-size:11px;color:var(--text);padding:2px 0"><span style="color:var(--gold-dim)">${i+1}.</span> ${v.node||'—'} <span style="color:var(--orange);font-size:10px">${v.modifier||''}</span></div>`).join('');
+  } else if (wsId === 'baro') {
+    if (data.active) {
+      const items = (data.inventory||[]).slice(0,3);
+      bodyHtml = `<div style="display:flex;align-items:center;gap:6px;margin-bottom:6px"><div class="baro-dot"></div><span style="font-size:11px;color:var(--green)">PRÉSENT — ${data.location||''}</span></div>`
+        + items.map(it=>`<div class="baro-item">${it.item||'—'}<span class="baro-price">${it.ducats||0}⚜</span></div>`).join('');
+    } else {
+      bodyHtml = `<div style="display:flex;align-items:center;gap:6px"><div class="baro-dot off"></div><span style="font-size:11px;color:var(--text-dim)">ABSENT — ${data.location||''}</span></div>`;
+    }
+  } else if (wsId === 'arbi') {
+    bodyHtml = `<div style="font-size:12px;color:var(--text)">${data.node||'—'}</div><div style="font-size:10px;color:var(--text-dim);margin-top:3px">${data.type||''} · ${data.enemy||''}</div>`;
+  } else if (wsId === 'nightwave') {
+    const daily = (data.activeChallenges||[]).filter(c=>c.isDaily&&!c.isPermanent).length;
+    const weekly = (data.activeChallenges||[]).filter(c=>!c.isDaily&&!c.isElite&&!c.isPermanent).length;
+    bodyHtml = `<div style="font-size:11px;color:var(--text-dim);margin-bottom:6px">${data.tag||''}</div>`
+      + `<div style="font-size:12px;color:var(--cyan)">${daily} journaliers · ${weekly} hebdomadaires</div>`;
+  } else if (wsId === 'invasions') {
+    const active = Array.isArray(data) ? data.filter(i=>!i.completed).slice(0,3) : [];
+    bodyHtml = `<div style="font-size:11px;color:var(--text-dim);margin-bottom:6px">${active.length} invasion${active.length>1?'s':''} active${active.length>1?'s':''}</div>`
+      + active.map(inv=>`<div style="font-size:11px;color:var(--text);padding:2px 0">${inv.node||'—'}</div>`).join('');
+  }
+
+  return `<div class="widget ${reorderMode?'dragging-mode':''}" draggable="${reorderMode}" data-wuid="${w.uid}" data-widx="${pinnedWidgets.indexOf(w)}">
+    <div class="widget-head">
+      ${reorderMode?'<span class="drag-handle">⠿</span>':''}
+      <span class="widget-title">${WS_ICONS[wsId]||''} ${WS_TITLES[wsId]||wsId.toUpperCase()}</span>
+      ${isPinBtn}
+    </div>
+    <div class="widget-body">${bodyHtml}</div>
+  </div>`;
+}
+
+function renderDashboard() {
+  const masonry = document.getElementById('dash-masonry');
+  const empty = document.getElementById('dash-empty');
+  if (!masonry) return;
+
+  // Update all pin buttons in WS tab
+  document.querySelectorAll('[data-action="pin-ws"]').forEach(btn => {
+    const pinned = isPinned('ws', btn.dataset.id);
+    btn.classList.toggle('pinned', pinned);
+    btn.textContent = pinned ? '📌' : 'pin';
+  });
+
+  if (!pinnedWidgets.length) {
+    masonry.innerHTML = '';
+    if (empty) empty.style.display = 'block';
+    return;
+  }
+  if (empty) empty.style.display = 'none';
+
+  const cards = pinnedWidgets.map((w, idx) => {
+    if (w.type === 'build') {
+      const b = builds.find(x => x.id === w.refId);
+      return b ? buildWidget(b, w) : null;
+    }
+    if (w.type === 'note') {
+      const n = notes.find(x => x.id === w.refId);
+      return n ? noteWidget(n, w) : null;
+    }
+    if (w.type === 'loot') {
+      const item = lootItems.find(x => x.id === w.refId);
+      return item ? lootWidget(item, w) : null;
+    }
+    if (w.type === 'ws') {
+      return wsWidget(w.refId, w);
+    }
+    return null;
+  }).filter(Boolean);
+
+  masonry.innerHTML = cards.join('');
+
+  // Attach DnD listeners if in reorder mode
+  if (reorderMode) {
+    masonry.querySelectorAll('.widget').forEach(el => {
+      el.addEventListener('dragstart', e => {
+        dragSrcIdx = parseInt(el.dataset.widx);
+        el.style.opacity = '.4';
+        e.dataTransfer.effectAllowed = 'move';
+      });
+      el.addEventListener('dragend', e => { el.style.opacity = '1'; });
+      el.addEventListener('dragover', e => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        masonry.querySelectorAll('.widget').forEach(w => w.classList.remove('drag-over'));
+        el.classList.add('drag-over');
+      });
+      el.addEventListener('dragleave', () => el.classList.remove('drag-over'));
+      el.addEventListener('drop', e => {
+        e.preventDefault();
+        el.classList.remove('drag-over');
+        const destIdx = parseInt(el.dataset.widx);
+        if (dragSrcIdx === null || dragSrcIdx === destIdx) return;
+        const moved = pinnedWidgets.splice(dragSrcIdx, 1)[0];
+        pinnedWidgets.splice(destIdx, 0, moved);
+        dragSrcIdx = null;
+        savePins();
+        renderDashboard();
+      });
+    });
+  }
+}
+['build-modal','io-modal','faq-modal'].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) el.addEventListener('click', e => {
+    if (e.target.id === id) el.classList.remove('open');
+  });
+});
+
+// ═══════════════════════════════════════════════
+// GLOBAL EVENT DELEGATION — handles all dynamic buttons
+// ═══════════════════════════════════════════════
+document.addEventListener('click', e => {
+  const el = e.target.closest('[data-action]');
+  if (!el) return;
+  const action = el.dataset.action;
+  const id = el.dataset.id;
+
+  if (action === 'edit-build') {
+    // Only trigger if click wasn't on a child button/link
+    if (!e.target.closest('button') && !e.target.closest('a')) openBuildModal(id);
+  }
+  if (action === 'delete-build') { e.stopPropagation(); deleteBuild(id, el); }
+  if (action === 'open-url') { e.stopPropagation(); window.open(el.dataset.url, '_blank', 'noopener'); }
+  if (action === 'delete-loot') deleteLootItem(id, el);
+  if (action === 'toggle-mat')  { e.stopPropagation(); toggleMat(id, el); }
+  if (action === 'toggle-craft') { e.stopPropagation(); toggleMat(id, el); } // legacy alias
+  if (action === 'fetch-stats') { e.stopPropagation(); fetchBuildStats(id, el); }
+  if (action === 'pin-build')   { e.stopPropagation(); togglePin('build', id); }
+  if (action === 'pin-note')    { e.stopPropagation(); togglePin('note', id); }
+  if (action === 'pin-loot')    { e.stopPropagation(); togglePin('loot', id); }
+  if (action === 'pin-ws')      { e.stopPropagation(); togglePin('ws', id); }
+  if (action === 'delete-note') { e.stopPropagation(); deleteNote(id, el); }
+  if (action === 'open-tab-build') { e.stopPropagation(); goTab('builds'); }
+  if (action === 'go-tab') { e.stopPropagation(); goTab(el.dataset.tab); }
+});
+
+function goTab(tab) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  const btn = document.querySelector(`.tab-btn[data-tab="${tab}"]`);
+  if (btn) btn.classList.add('active');
+  const content = document.getElementById('tab-' + tab);
+  if (content) content.classList.add('active');
+  if (tab === 'news' && !newsLoaded) loadNews();
+}
+
+document.addEventListener('change', e => {
+  const el = e.target.closest('[data-action]');
+  if (!el) return;
+  if (el.dataset.action === 'loot-status')   setLootStatus(el.dataset.id, el.value);
+  if (el.dataset.action === 'loot-priority') setLootPriority(el.dataset.id, el.value);
+});
+
+document.addEventListener('input', e => {
+  const el = e.target.closest('[data-action]');
+  if (!el) return;
+  if (el.dataset.action === 'note-title') updNote(el.dataset.id, 'title', el.value);
+  if (el.dataset.action === 'note-body')  updNote(el.dataset.id, 'body',  el.value);
+});
+
+function setLootPriority(id, priority) {
+  const item = lootItems.find(i => i.id === id);
+  if (!item) return;
+  item.priority = priority; saveLoot(); renderLoot();
+}
+
+function toggleMat(id, btn) {
+  const panel = document.getElementById('mat-' + id);
+  if (!panel) return;
+  const isOpen = panel.style.display !== 'none';
+  panel.style.display = isOpen ? 'none' : '';
+  if (btn) btn.textContent = isOpen ? '▼ Détails' : '▲ Fermer';
+}
+
+// Legacy alias kept for old toggle-craft references
+function toggleCraft(id, btn) { toggleMat(id, btn); }
+
+// ═══════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════
+async function init() {
+  const savedTheme = (localStorage.getItem('wf2_theme') || 'dark');
+  if (savedTheme === 'light') {
+    document.documentElement.setAttribute('data-theme', 'light');
+    const btn = document.getElementById('theme-btn');
+    if (btn) { btn.textContent = '☀'; btn.title = 'Passer en mode sombre'; }
+  }
+  renderBuilds();
+  renderLoot();
+  renderNotes();
+  renderDashboard();
+  loadWS();
+  setInterval(loadWS, 5 * 60 * 1000);
+
+  // Cloud: pre-fill URL input and init auto-sync
+  const savedUrl = localStorage.getItem('wf2_cloud_url') || DEFAULT_CLOUD_URL;
+  const urlInp = document.getElementById('cloud-url-input');
+  if (urlInp) urlInp.value = savedUrl;
+  if (!localStorage.getItem('wf2_cloud_url')) localStorage.setItem('wf2_cloud_url', DEFAULT_CLOUD_URL);
+
+  const autoCheck = document.getElementById('cloud-auto');
+  const autoEnabled = localStorage.getItem('wf2_cloud_auto') === '1';
+  if (autoCheck) autoCheck.checked = autoEnabled;
+  if (autoEnabled) cloudAutoTimer = setInterval(() => cloudSave(true), 5 * 60 * 1000);
+
+  // Auto-load from cloud on startup
+  cloudLoad(false);
+}
+
+init();
+</script>
+</body>
+</html>
