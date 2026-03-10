@@ -693,15 +693,23 @@ td{padding:9px 11px;font-size:12px;color:var(--text);vertical-align:middle;}
             </div>
             <div class="cloud-code" id="cloud-code-block">function doGet(e) {
   var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  var p = e.parameter;
+
+  if (p.action === 'save') {
+    var i = parseInt(p.i), n = parseInt(p.n);
+    sheet.getRange(2, i + 1).setValue(p.d || '');
+    if (i === n - 1) {
+      var parts = [];
+      for (var k = 0; k < n; k++) parts.push(sheet.getRange(2, k + 1).getValue());
+      sheet.getRange('A1').setValue(parts.join(''));
+      sheet.getRange(2, 1, 1, n).clearContent();
+    }
+    return ContentService.createTextOutput('{"ok":true}')
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+
   var val = sheet.getRange('A1').getValue();
   return ContentService.createTextOutput(val || '{}')
-    .setMimeType(ContentService.MimeType.JSON);
-}
-
-function doPost(e) {
-  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-  sheet.getRange('A1').setValue(e.postData.contents);
-  return ContentService.createTextOutput('{"ok":true}')
     .setMimeType(ContentService.MimeType.JSON);
 }</div>
             <button class="btn-g" onclick="copyCloudCode()" style="font-size:10px;padding:4px 10px">📋 COPIER LE CODE</button>
@@ -2169,12 +2177,14 @@ async function cloudSave(silent = false) {
   if (!url) { if (!silent) showIOMsg('Pas d\'URL configurée.', 'red'); return; }
   updateCloudStatus('busy');
   try {
-    const r = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain' },
-      body: JSON.stringify(getAllData())
-    });
-    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const json = JSON.stringify(getAllData());
+    const CHUNK = 1500;
+    const total = Math.ceil(json.length / CHUNK);
+    for (let i = 0; i < total; i++) {
+      const part = encodeURIComponent(json.slice(i * CHUNK, (i + 1) * CHUNK));
+      const r = await fetch(`${url}?action=save&i=${i}&n=${total}&d=${part}&v=${Date.now()}`);
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+    }
     updateCloudStatus('ok');
     if (!silent) showIOMsg('✓ Données sauvegardées dans le cloud !', 'green');
   } catch(e) {
