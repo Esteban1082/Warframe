@@ -299,6 +299,25 @@ td{padding:9px 11px;font-size:12px;color:var(--text);vertical-align:middle;}
 .craft-qty{font-weight:600;color:var(--gold);margin-right:2px;}
 .relic-chip{display:inline-flex;align-items:center;gap:4px;padding:2px 6px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:3px;font-size:10px;color:var(--text-mid);margin:2px;}
 .loot-add-form{padding:0 20px 18px;display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;}
+/* Loot card grid */
+.loot-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(255px,1fr));gap:8px;margin-bottom:6px;}
+.loot-card{background:var(--card2);border:1px solid var(--border);border-radius:6px;padding:10px 12px;transition:border-color .15s;}
+.loot-card:hover{border-color:var(--border2);}
+.loot-card-done{opacity:.5;}
+.loot-card-head{display:flex;align-items:flex-start;gap:7px;margin-bottom:6px;}
+.loot-card-img{width:30px;height:30px;object-fit:contain;border-radius:3px;background:var(--bg3);flex-shrink:0;}
+.loot-card-title{font-weight:600;font-size:12px;flex:1;line-height:1.3;}
+.loot-card-note{font-size:10px;color:var(--text-dim);font-weight:400;margin-top:1px;}
+.loot-card-meta{display:flex;gap:5px;margin-bottom:4px;}
+/* Component checkboxes */
+.loot-parts{display:flex;flex-wrap:wrap;gap:3px 8px;margin:4px 0 5px;}
+.loot-part{display:flex;align-items:center;gap:3px;font-size:10px;color:var(--text-mid);cursor:pointer;user-select:none;}
+.loot-part input[type=checkbox]{cursor:pointer;accent-color:var(--cyan);width:11px;height:11px;margin:0;flex-shrink:0;}
+.loot-part.owned{color:var(--text-dim);text-decoration:line-through;}
+/* Totals toggle */
+.loot-totals-toggle{display:flex;gap:3px;}
+.loot-totals-toggle button{font-size:9px;padding:2px 9px;border-radius:3px;border:1px solid var(--border);background:none;color:var(--text-dim);cursor:pointer;font-family:'Rajdhani',sans-serif;letter-spacing:1px;text-transform:uppercase;transition:all .15s;}
+.loot-totals-toggle button.act{background:var(--bg3);color:var(--text);border-color:var(--border2);}
 
 /* ══════════════════════════════════
    NEWS TAB
@@ -695,15 +714,19 @@ td{padding:9px 11px;font-size:12px;color:var(--text);vertical-align:middle;}
   var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
   var p = e.parameter;
 
-  if (p.action === 'save') {
-    var i = parseInt(p.i), n = parseInt(p.n);
+  if (p.action === 'chunk') {
+    var i = parseInt(p.i);
     sheet.getRange(2, i + 1).setValue(p.d || '');
-    if (i === n - 1) {
-      var parts = [];
-      for (var k = 0; k < n; k++) parts.push(sheet.getRange(2, k + 1).getValue());
-      sheet.getRange('A1').setValue(parts.join(''));
-      sheet.getRange(2, 1, 1, n).clearContent();
-    }
+    return ContentService.createTextOutput('{"ok":true}')
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+
+  if (p.action === 'finalize') {
+    var n = parseInt(p.n);
+    var parts = [];
+    for (var k = 0; k < n; k++) parts.push(sheet.getRange(2, k + 1).getValue());
+    sheet.getRange('A1').setValue(parts.join(''));
+    sheet.getRange(2, 1, 1, n).clearContent();
     return ContentService.createTextOutput('{"ok":true}')
       .setMimeType(ContentService.MimeType.JSON);
   }
@@ -1625,6 +1648,7 @@ lootItems = (lootItems || []).map(i => ({
   tags: Array.isArray(i.tags) ? i.tags.filter(t => t && typeof t === 'string') : []
 }));
 let lootFilter = 'all';
+let lootTotalsMode = 'raw'; // 'raw' | 'parts'
 
 function saveLoot() { sv(K.loot, lootItems); }
 function focusLoot() { document.getElementById('loot-name').focus(); }
@@ -1755,43 +1779,30 @@ const PRIO_CLS = {high:'p-high',med:'p-med',low:'p-low'};
 
 function renderLoot() {
   const craftSec = document.getElementById('loot-craft-section');
-  const totalsSec = document.getElementById('loot-totals-section');
-  const empty = document.getElementById('loot-empty');
+  const empty    = document.getElementById('loot-empty');
 
   let list = lootItems;
-  const q = (document.getElementById('loot-q')?.value || '').toLowerCase();
+  const q  = (document.getElementById('loot-q')?.value  || '').toLowerCase();
   const tq = (document.getElementById('loot-tag-q')?.value || '').toLowerCase();
-  // Category filters
+
   if (CAT_KEYS.includes(lootFilter)) {
-    if (lootFilter === 'other') {
-      list = list.filter(i => !CAT_KEYS.slice(0,-1).includes((i.cat||'').toLowerCase()));
-    } else {
-      list = list.filter(i => (i.cat||'').toLowerCase() === lootFilter);
-    }
+    list = lootFilter === 'other'
+      ? list.filter(i => !CAT_KEYS.slice(0,-1).includes((i.cat||'').toLowerCase()))
+      : list.filter(i => (i.cat||'').toLowerCase() === lootFilter);
   } else if (lootFilter === 'farming') list = list.filter(i => i.status === 'farming');
-  else if (lootFilter === 'done')    list = list.filter(i => i.status === 'done');
+  else if  (lootFilter === 'done')     list = list.filter(i => i.status === 'done');
 
-  if (q) {
-    list = list.filter(i =>
-      i.name.toLowerCase().includes(q) ||
-      (i.notes||'').toLowerCase().includes(q) ||
-      (i.source||'').toLowerCase().includes(q)
-    );
-  }
-  if (tq) {
-    list = list.filter(i => Array.isArray(i.tags) && i.tags.some(t => t.toLowerCase().includes(tq)));
-  }
+  if (q)  list = list.filter(i => i.name.toLowerCase().includes(q) || (i.notes||'').toLowerCase().includes(q) || (i.source||'').toLowerCase().includes(q));
+  if (tq) list = list.filter(i => Array.isArray(i.tags) && i.tags.some(t => t.toLowerCase().includes(tq)));
 
-  // Snapshot open mat panels before re-render
+  // Keep open mat panels across re-renders
   const openMats = new Set();
-  craftSec.querySelectorAll('[id^="mat-"]').forEach(el => {
-    if (el.style.display !== 'none') openMats.add(el.id.slice(4));
-  });
+  craftSec.querySelectorAll('[id^="mat-"]').forEach(el => { if (el.style.display !== 'none') openMats.add(el.id.slice(4)); });
 
   if (!list.length) {
     craftSec.innerHTML = '';
-    totalsSec.innerHTML = '';
     empty.style.display = 'block';
+    renderLootTotals();
     return;
   }
   empty.style.display = 'none';
@@ -1799,94 +1810,83 @@ function renderLoot() {
   const CAT_BADGE = {warframe:'b-gold',primary:'b-cyan',secondary:'b-cyan',melee:'b-red',companion:'b-green',archwing:'b-orange',mod:'b-purple',resource:'b-gray',other:'b-gray'};
   const CAT_LABEL = {warframe:'Warframe',primary:'Primaire',secondary:'Secondaire',melee:'Mêlée',companion:'Compagnon',archwing:'Archwing',mod:'Mod',resource:'Ressource',other:'Autre'};
 
-  const sorted = [...list].sort((a,b) => {
-    const po = {high:0,med:1,low:2};
-    return (po[a.priority]||1) - (po[b.priority]||1);
-  });
+  const sorted = [...list].sort((a,b) => ({high:0,med:1,low:2}[a.priority]||1) - ({high:0,med:1,low:2}[b.priority]||1));
 
-  let h = `<div class="loot-section-title">ITEMS À CRAFTER <span class="badge b-gold" style="margin-left:6px">${sorted.length}</span></div>
-  <table class="loot-tbl"><thead><tr>
-    <th style="width:36px"></th><th>ITEM</th><th>TYPE</th>
-    <th>PRIORITÉ</th><th>STATUT</th><th>MATÉRIAUX</th><th style="width:70px"></th>
-  </tr></thead><tbody>`;
+  let h = `<div class="loot-section-title">ITEMS À CRAFTER <span class="badge b-gold" style="margin-left:6px">${sorted.length}</span></div><div class="loot-cards">`;
 
   sorted.forEach(item => {
+    const done    = item.status === 'done';
+    const catKey  = (item.cat||'other').toLowerCase();
     const hasMats = item.craftData && Object.keys(item.craftData.materials||{}).length > 0;
-    const statusDone = item.status === 'done';
-    const catKey = (item.cat||'other').toLowerCase();
-    const catBadge = CAT_BADGE[catKey] || 'b-gray';
-    const catLabel = CAT_LABEL[catKey] || (item.cat||'—');
-    const tagsHtml = (item.tags && item.tags.length)
-      ? `<div class="loot-tags">${item.tags.map(t => `<span class="badge b-gray">${esc(t)}</span>`).join('')}</div>`
-      : '';
+    const owned   = item.ownedParts || {};
 
-    h += `<tr style="${statusDone?'opacity:.5':''}">
-      <td>${item.imageName ? `<img src="${imgUrl(item.imageName)}" style="width:28px;height:28px;object-fit:contain;border-radius:3px;background:var(--bg3)" onerror="this.style.display='none'">` : ''}</td>
-      <td style="font-weight:500;${statusDone?'text-decoration:line-through;color:var(--text-dim)':''}">${item.name}
-        ${item.notes?`<div style="font-size:10px;color:var(--text-dim)">${item.notes}</div>`:''}
-        ${tagsHtml}
-      </td>
-      <td><span class="badge ${catBadge}" style="font-size:8px">${catLabel}</span></td>
-      <td>
-        <select class="sel" style="padding:3px 6px;font-size:11px;width:auto;border:1px solid var(--border)" data-action="loot-priority" data-id="${item.id}">
-          <option value="high" ${item.priority==='high'?'selected':''} style="color:var(--red)">🔴 Haute</option>
-          <option value="med"  ${item.priority==='med' ?'selected':''} style="color:var(--orange)">🟠 Moyenne</option>
+    // Component checkboxes (isComp parts only)
+    const compParts = hasMats ? Object.entries(item.craftData.materials).filter(([,inf]) => inf.isComp) : [];
+    const partsHtml = compParts.length ? `<div class="loot-parts">${compParts.map(([name]) => {
+      const isOwned = !!owned[name];
+      const label   = name.toLowerCase().startsWith(item.name.toLowerCase() + ' ') ? name.slice(item.name.length + 1) : name;
+      return `<label class="loot-part${isOwned?' owned':''}"><input type="checkbox" ${isOwned?'checked':''} data-action="loot-part" data-id="${item.id}" data-part="${esc(name)}">${esc(label)}</label>`;
+    }).join('')}</div>` : '';
+
+    // Expandable materials panel
+    let matHtml = '';
+    if (hasMats) {
+      const mats   = item.craftData.materials;
+      const relics = item.craftData.relics || [];
+      matHtml = `<div id="mat-${item.id}" style="display:none;margin-top:7px;padding-top:7px;border-top:1px solid var(--border)">
+        <div class="craft-col-title" style="margin-bottom:5px">RESSOURCES <span style="font-size:9px;opacity:.6">(cliquer = wiki)</span></div>
+        <div class="mat-grid">`;
+      Object.entries(mats).forEach(([name, info]) => {
+        const rawName = info.wikiName || name;
+        const wikiUrl = `https://wiki.warframe.com/w/${encodeURIComponent(rawName.replace(/ /g,'_'))}`;
+        matHtml += `<a class="mat-item" href="${wikiUrl}" target="_blank" style="text-decoration:none" onmouseover="this.style.borderColor='var(--cyan-dim)'" onmouseout="this.style.borderColor='var(--border)'">
+          <span class="mat-qty">${info.qty}×</span>
+          <div><div class="mat-name" style="color:${info.isComp?'var(--gold)':'var(--text-mid)'}">${esc(name)}</div>${info.source?`<div class="mat-relic">${esc(info.source)}</div>`:''}</div>
+        </a>`;
+      });
+      matHtml += `</div>`;
+      if (relics.length) {
+        matHtml += `<div style="margin-top:8px"><div class="craft-col-title">RELIQUES</div>`;
+        relics.forEach(r => {
+          const tier = ['Lith','Meso','Neo','Axi','Requiem'].find(t => (r.location||'').startsWith(t)) || '';
+          const rar  = r.rarity || '';
+          matHtml += `<div style="margin-bottom:3px"><span class="badge b-${tier.toLowerCase()||'gray'}" style="margin-right:3px">${tier||'?'}</span><span style="font-size:10px;color:var(--text-mid)">${r.location||'?'}</span> <span class="badge ${rar==='Rare'?'b-gold':rar==='Uncommon'?'b-orange':'b-gray'}">${rar}</span></div>`;
+        });
+        matHtml += `</div>`;
+      }
+      matHtml += `</div>`;
+    }
+
+    h += `<div class="loot-card${done?' loot-card-done':''}">
+      <div class="loot-card-head">
+        ${item.imageName ? `<img src="${imgUrl(item.imageName)}" class="loot-card-img" onerror="this.style.display='none'">` : ''}
+        <div class="loot-card-title">${esc(item.name)}${item.notes?`<div class="loot-card-note">${esc(item.notes)}</div>`:''}</div>
+        <span class="badge ${CAT_BADGE[catKey]||'b-gray'}" style="font-size:8px;flex-shrink:0">${CAT_LABEL[catKey]||item.cat||'—'}</span>
+        <button class="pin-btn ${pinnedWidgets.some(w=>w.type==='loot'&&w.refId===item.id)?'pinned':''}" data-action="pin-loot" data-id="${item.id}">📌</button>
+        <button class="btn-icon del" data-action="delete-loot" data-id="${item.id}">🗑</button>
+      </div>
+      <div class="loot-card-meta">
+        <select class="sel" style="padding:2px 5px;font-size:10px;width:auto" data-action="loot-priority" data-id="${item.id}">
+          <option value="high" ${item.priority==='high'?'selected':''}>🔴 Haute</option>
+          <option value="med"  ${item.priority==='med' ?'selected':''}>🟠 Moyenne</option>
           <option value="low"  ${item.priority==='low' ?'selected':''}>⚪ Basse</option>
         </select>
-      </td>
-      <td>
-        <select class="sel" style="padding:3px 6px;font-size:11px;width:auto;border:1px solid var(--border)" data-action="loot-status" data-id="${item.id}">
+        <select class="sel" style="padding:2px 5px;font-size:10px;width:auto" data-action="loot-status" data-id="${item.id}">
           <option value="pending" ${item.status==='pending'?'selected':''}>En attente</option>
           <option value="farming" ${item.status==='farming'?'selected':''}>En farm 🔁</option>
           <option value="done"    ${item.status==='done'   ?'selected':''}>Obtenu ✓</option>
         </select>
-      </td>
-      <td style="white-space:nowrap">
-        ${hasMats?`<button class="craft-toggle" data-action="toggle-mat" data-id="${item.id}">▼ Détails</button>`:'<span style="font-size:10px;color:var(--text-dim)">—</span>'}
-      </td>
-      <td style="white-space:nowrap">
-        <button class="pin-btn ${pinnedWidgets.some(w=>w.type==='loot'&&w.refId===item.id)?'pinned':''}" data-action="pin-loot" data-id="${item.id}">📌</button>
-        <button class="btn-icon del" data-action="delete-loot" data-id="${item.id}">🗑</button>
-      </td>
-    </tr>`;
-
-    if (hasMats) {
-      const mats = item.craftData.materials;
-      const relics = item.craftData.relics || [];
-      h += `<tr><td colspan="7" style="padding:0">
-        <div id="mat-${item.id}" style="display:none;background:var(--bg3);border-top:1px solid var(--border)">
-          <div style="padding:10px 16px 14px">
-            <div style="display:flex;gap:20px;flex-wrap:wrap">
-              <div style="flex:2;min-width:200px">
-                <div class="craft-col-title">RESSOURCES NÉCESSAIRES <span style="font-size:9px;color:var(--text-dim)">(cliquer = wiki)</span></div>
-                <div class="mat-grid">`;
-      Object.entries(mats).forEach(([name, info]) => {
-        // Wiki URL: use raw component name if available, else strip parent prefix from display name
-        const rawName = info.wikiName || name;
-        const wikiUrl = `https://wiki.warframe.com/w/${encodeURIComponent(rawName.replace(/ /g,'_'))}`;
-        h += `<a class="mat-item" href="${wikiUrl}" target="_blank" title="Voir ${rawName} sur le wiki" style="text-decoration:none;cursor:pointer" onmouseover="this.style.borderColor='var(--cyan-dim)'" onmouseout="this.style.borderColor='var(--border)'">
-          <span class="mat-qty">${info.qty}×</span>
-          <div><div class="mat-name" style="color:${info.isComp?'var(--gold)':'var(--text-mid)'}">${name}</div>${info.source?`<div class="mat-relic">${info.source}</div>`:''}</div>
-          <span style="font-size:9px;color:var(--text-dim);margin-left:auto">wiki↗</span>
-        </a>`;
-      });
-      h += `</div></div>`;
-      if (relics.length) {
-        h += `<div style="flex:1;min-width:160px"><div class="craft-col-title">RELIQUES</div>`;
-        relics.forEach(r => {
-          const tier = ['Lith','Meso','Neo','Axi','Requiem'].find(t => (r.location||'').startsWith(t))||'';
-          const rar = r.rarity||'';
-          const rarBadge = rar==='Rare'?'b-gold':rar==='Uncommon'?'b-orange':'b-gray';
-          h += `<div style="margin-bottom:4px"><span class="badge b-${tier.toLowerCase()||'gray'}" style="margin-right:3px">${tier||'?'}</span><span style="font-size:10px;color:var(--text-mid)">${r.location||'?'}</span> <span class="badge ${rarBadge}">${rar}</span></div>`;
-        });
-        h += `</div>`;
-      }
-      h += `</div></div></div></td></tr>`;
-    }
+      </div>
+      ${partsHtml}
+      ${hasMats ? `<button class="craft-toggle" data-action="toggle-mat" data-id="${item.id}" style="margin-top:3px">▼ Matériaux</button>` : ''}
+      ${matHtml}
+    </div>`;
   });
-  h += `</tbody></table>`;
+
+  h += '</div>';
   craftSec.innerHTML = h;
-  // Restore previously open mat panels
+
+  // Restore open mat panels
   openMats.forEach(id => {
     const panel = document.getElementById('mat-' + id);
     if (panel) {
@@ -1896,32 +1896,79 @@ function renderLoot() {
     }
   });
 
-  // TOTALS — aggregate raw materials from all non-done items
-  const totals = {};
-  lootItems.filter(i => i.status !== 'done' && i.craftData?.materials).forEach(item => {
-    Object.entries(item.craftData.materials).forEach(([name, info]) => {
-      if (!info.isComp) {
-        if (totals[name]) totals[name].qty += info.qty;
-        else totals[name] = { qty: info.qty, wikiName: info.wikiName || name };
-      }
+  renderLootTotals();
+}
+
+function renderLootTotals() {
+  const totalsSec = document.getElementById('loot-totals-section');
+  const active = lootItems.filter(i => i.status !== 'done' && i.craftData?.materials);
+  if (!active.length) { totalsSec.innerHTML = ''; return; }
+
+  const toggleHtml = (mode) => `<div class="loot-totals-toggle">
+    <button ${mode==='parts'?'class="act"':''} onclick="setLootTotalsMode('parts')">COMPOSANTS</button>
+    <button ${mode==='raw'  ?'class="act"':''} onclick="setLootTotalsMode('raw')">RESSOURCES</button>
+  </div>`;
+
+  if (lootTotalsMode === 'parts') {
+    const parts = [];
+    active.forEach(item => {
+      const owned = item.ownedParts || {};
+      Object.entries(item.craftData.materials).forEach(([name, info]) => {
+        if (info.isComp && !owned[name]) {
+          const label = name.toLowerCase().startsWith(item.name.toLowerCase() + ' ') ? name.slice(item.name.length + 1) : name;
+          parts.push({ label, item: item.name });
+        }
+      });
     });
-  });
-  if (Object.keys(totals).length) {
-    let th = `<div class="loot-totals">
-      <div class="loot-section-title" style="margin-bottom:0">TOTAL RESSOURCES MANQUANTES <span class="badge b-orange" style="margin-left:6px">${Object.keys(totals).length} types</span></div>
-      <div class="total-grid">`;
-    Object.entries(totals).sort((a,b)=>b[1].qty-a[1].qty).forEach(([name, info]) => {
+    let th = `<div class="loot-totals"><div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+      <div class="loot-section-title" style="margin-bottom:0;flex:1">COMPOSANTS MANQUANTS <span class="badge b-orange" style="margin-left:6px">${parts.length}</span></div>
+      ${toggleHtml('parts')}</div>`;
+    if (parts.length) {
+      th += `<div style="display:flex;flex-wrap:wrap;gap:4px 6px">` +
+        parts.map(p => `<span class="badge b-gray" style="font-size:10px">${esc(p.label)} <span style="opacity:.5;font-size:9px">${esc(p.item)}</span></span>`).join('') +
+        `</div>`;
+    } else {
+      th += `<div style="font-size:11px;color:var(--green)">✓ Tous les composants obtenus !</div>`;
+    }
+    totalsSec.innerHTML = th + `</div>`;
+
+  } else {
+    const totals = {};
+    active.forEach(item => {
+      Object.entries(item.craftData.materials).forEach(([name, info]) => {
+        if (!info.isComp) {
+          if (totals[name]) totals[name].qty += info.qty;
+          else totals[name] = { qty: info.qty, wikiName: info.wikiName || name };
+        }
+      });
+    });
+    if (!Object.keys(totals).length) { totalsSec.innerHTML = ''; return; }
+    let th = `<div class="loot-totals"><div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+      <div class="loot-section-title" style="margin-bottom:0;flex:1">TOTAL RESSOURCES MANQUANTES <span class="badge b-orange" style="margin-left:6px">${Object.keys(totals).length} types</span></div>
+      ${toggleHtml('raw')}</div><div class="total-grid">`;
+    Object.entries(totals).sort((a,b) => b[1].qty - a[1].qty).forEach(([name, info]) => {
       const rawName = info.wikiName || name;
       const wikiUrl = `https://wiki.warframe.com/w/${encodeURIComponent(rawName.replace(/ /g,'_'))}`;
-      th += `<a class="total-item" href="${wikiUrl}" target="_blank" title="Voir ${rawName} sur le wiki" style="text-decoration:none" onmouseover="this.style.borderColor='var(--cyan-dim)'" onmouseout="this.style.borderColor='var(--border)'">
-        <span class="total-qty">${info.qty}×</span><span class="total-name">${name}</span><span style="font-size:9px;color:var(--text-dim);margin-left:auto">wiki↗</span>
+      th += `<a class="total-item" href="${wikiUrl}" target="_blank" style="text-decoration:none" onmouseover="this.style.borderColor='var(--cyan-dim)'" onmouseout="this.style.borderColor='var(--border)'">
+        <span class="total-qty">${info.qty}×</span><span class="total-name">${esc(name)}</span><span style="font-size:9px;color:var(--text-dim);margin-left:auto">wiki↗</span>
       </a>`;
     });
-    th += `</div></div>`;
-    totalsSec.innerHTML = th;
-  } else {
-    totalsSec.innerHTML = '';
+    totalsSec.innerHTML = th + `</div></div>`;
   }
+}
+
+function setLootTotalsMode(mode) { lootTotalsMode = mode; renderLootTotals(); }
+
+function togglePart(itemId, partName) {
+  const item = lootItems.find(i => i.id === itemId);
+  if (!item) return;
+  if (!item.ownedParts) item.ownedParts = {};
+  item.ownedParts[partName] = !item.ownedParts[partName];
+  saveLoot();
+  // Quick DOM update — toggle class without full re-render
+  const cb = document.querySelector(`[data-action="loot-part"][data-id="${itemId}"][data-part="${partName.replace(/"/g,'\\"')}"]`);
+  if (cb) cb.closest('.loot-part')?.classList.toggle('owned', !!item.ownedParts[partName]);
+  renderLootTotals();
 }
 
 // Legacy stubs
@@ -2177,14 +2224,18 @@ async function cloudSave(silent = false) {
   if (!url) { if (!silent) showIOMsg('Pas d\'URL configurée.', 'red'); return; }
   updateCloudStatus('busy');
   try {
-    const json = JSON.stringify(getAllData());
-    const CHUNK = 1500;
+    const json = JSON.stringify(getCloudData());
+    const CHUNK = 2000;
     const total = Math.ceil(json.length / CHUNK);
-    for (let i = 0; i < total; i++) {
+    // Envoie tous les chunks en parallèle
+    await Promise.all(Array.from({length: total}, (_, i) => {
       const part = encodeURIComponent(json.slice(i * CHUNK, (i + 1) * CHUNK));
-      const r = await fetch(`${url}?action=save&i=${i}&n=${total}&d=${part}&v=${Date.now()}`);
-      if (!r.ok) throw new Error('HTTP ' + r.status);
-    }
+      return fetch(`${url}?action=chunk&i=${i}&n=${total}&d=${part}&v=${Date.now()}`)
+        .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); });
+    }));
+    // Finalise : assemble les chunks en A1
+    const rf = await fetch(`${url}?action=finalize&n=${total}&v=${Date.now()}`);
+    if (!rf.ok) throw new Error('HTTP ' + rf.status);
     updateCloudStatus('ok');
     if (!silent) showIOMsg('✓ Données sauvegardées dans le cloud !', 'green');
   } catch(e) {
@@ -2232,6 +2283,12 @@ function getAllData() {
   return {v:2, exportedAt: new Date().toISOString(), builds, prog: progData, loot: lootItems, notes, pins: pinnedWidgets};
 }
 
+// Version allégée pour le cloud : exclut craftData (donnée statique, ~300KB économisés)
+function getCloudData() {
+  const d = getAllData();
+  return { ...d, loot: (d.loot || []).map(({ craftData, ...rest }) => rest) };
+}
+
 function openIO() { document.getElementById('io-modal').classList.add('open'); document.getElementById('io-msg').style.display='none'; }
 function closeIO() { document.getElementById('io-modal').classList.remove('open'); }
 function openFAQ() { document.getElementById('faq-modal').classList.add('open'); }
@@ -2270,10 +2327,15 @@ function applyImport(data) {
   }
   if (data.prog)     { progData = data.prog; sv(K.prog, progData); }
   if (data.loot)     {
-    lootItems = (data.loot || []).map(i => ({
-      ...i,
-      tags: Array.isArray(i.tags) ? i.tags.filter(t => t && typeof t === 'string') : []
-    }));
+    const prevLoot = lootItems; // garde craftData existante
+    lootItems = (data.loot || []).map(i => {
+      const local = prevLoot.find(l => l.id === i.id || l.name === i.name);
+      return {
+        ...i,
+        craftData: i.craftData ?? local?.craftData ?? null,
+        tags: Array.isArray(i.tags) ? i.tags.filter(t => t && typeof t === 'string') : []
+      };
+    });
     sv(K.loot, lootItems); renderLoot();
   }
   if (data.notes)    { notes = data.notes; sv(K.notes, notes); renderNotes(); }
@@ -2710,6 +2772,7 @@ document.addEventListener('change', e => {
   if (!el) return;
   if (el.dataset.action === 'loot-status')   setLootStatus(el.dataset.id, el.value);
   if (el.dataset.action === 'loot-priority') setLootPriority(el.dataset.id, el.value);
+  if (el.dataset.action === 'loot-part')     togglePart(el.dataset.id, el.dataset.part);
 });
 
 document.addEventListener('input', e => {
@@ -2730,7 +2793,7 @@ function toggleMat(id, btn) {
   if (!panel) return;
   const isOpen = panel.style.display !== 'none';
   panel.style.display = isOpen ? 'none' : '';
-  if (btn) btn.textContent = isOpen ? '▼ Détails' : '▲ Fermer';
+  if (btn) btn.textContent = isOpen ? '▼ Matériaux' : '▲ Fermer';
 }
 
 // Legacy alias kept for old toggle-craft references
