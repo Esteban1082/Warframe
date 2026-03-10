@@ -32,6 +32,39 @@
   --text-mid: #a09080;
   --lith:  #a0c8ff; --meso: #a0e8a0; --neo: #ffe080; --axi: #ff9060; --req: #d080ff;
 }
+/* Thème clair */
+[data-theme="light"] {
+  --bg:       #e8e6e2;
+  --bg2:      #f0eeea;
+  --bg3:      #f5f3ef;
+  --card:     #faf8f4;
+  --card2:    #f5f3ef;
+  --border:   #d0ccc6;
+  --border2:  #b8b4ac;
+  --gold:     #a67c00;
+  --gold2:    #c9a227;
+  --gold-dim: #6b5a20;
+  --gold-glow:rgba(166,124,0,.2);
+  --cyan:     #0088aa;
+  --cyan2:    #00aacc;
+  --cyan-dim: #a8dce8;
+  --red:      #cc2828;
+  --red-dim:  #f0c8c8;
+  --green:    #1a9e50;
+  --green-dim:#c8ecd8;
+  --orange:   #c96a20;
+  --purple:   #8040c0;
+  --text:     #2a2620;
+  --text-dim: #6a6258;
+  --text-mid: #4a4640;
+}
+[data-theme="light"] body::before{background:radial-gradient(ellipse 70% 50% at 50% -5%,rgba(0,136,170,.06) 0%,transparent 65%),radial-gradient(ellipse 40% 60% at 95% 85%,rgba(166,124,0,.05) 0%,transparent 60%);}
+[data-theme="light"] body::after{opacity:.15;}
+[data-theme="light"] header,[data-theme="light"] nav{background:rgba(248,246,242,.97);border-color:var(--border);}
+/* Tooltips */
+[data-tooltip]{position:relative;cursor:help;}
+[data-tooltip]::after{content:attr(data-tooltip);position:absolute;bottom:100%;left:50%;transform:translateX(-50%) translateY(-6px);padding:6px 10px;background:var(--bg2);border:1px solid var(--border2);border-radius:4px;font-size:11px;font-family:'Rajdhani',sans-serif;white-space:normal;max-width:220px;text-align:center;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:500;box-shadow:0 4px 12px rgba(0,0,0,.3);}
+[data-tooltip]:hover::after{opacity:1;transform:translateX(-50%) translateY(-4px);}
 *{box-sizing:border-box;margin:0;padding:0;}
 html{scroll-behavior:smooth;}
 body{background:var(--bg);color:var(--text);font-family:'Exo 2',sans-serif;font-size:14px;min-height:100vh;overflow-x:hidden;}
@@ -205,37 +238,14 @@ nav::-webkit-scrollbar{display:none;}
 .ac-type{font-size:10px;color:var(--text-dim);}
 
 /* ══════════════════════════════════
-   PROGRESSION V2
+   FISSURE FILTERS
 ══════════════════════════════════ */
-.prog-wrap{padding:18px 20px;max-width:860px;}
-.prog-sec{background:var(--card);border:1px solid var(--border);border-radius:8px;margin-bottom:14px;}
-.prog-sec-head{padding:11px 15px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.02);cursor:pointer;user-select:none;border-radius:8px 8px 0 0;}
-.prog-sec-head:hover{background:rgba(255,255,255,.04);}
-.prog-sec.coll .prog-sec-head{border-radius:8px;border-bottom:none;}
-.prog-sec-title{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:13px;letter-spacing:1.5px;text-transform:uppercase;display:flex;align-items:center;gap:8px;}
-.prog-chev{transition:transform .2s;font-size:10px;color:var(--text-dim);}
-.prog-sec.coll .prog-chev{transform:rotate(-90deg);}
-.prog-sec.coll .prog-body{display:none;}
-.prog-body{padding:8px 12px 12px;overflow:visible;}
-.prog-item-clickable{cursor:pointer;}
-.prog-item-clickable:hover .prog-item-name{color:var(--cyan);}
-.prog-bar-w{margin:4px 0 10px;height:3px;background:rgba(255,255,255,.05);border-radius:2px;overflow:hidden;}
-.prog-bar{height:3px;border-radius:2px;background:linear-gradient(90deg,var(--green-dim,#0a2818),var(--green));transition:width .5s ease;}
-.prog-item{display:flex;align-items:flex-start;gap:10px;padding:7px 5px;border-radius:4px;transition:background .15s;}
-.prog-item:hover{background:rgba(255,255,255,.025);}
-.prog-cb{width:15px;height:15px;border:1.5px solid var(--border2);border-radius:3px;cursor:pointer;flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;transition:all .2s;}
-.prog-cb.chk{background:var(--green);border-color:var(--green);}
-.prog-cb.chk::after{content:'✓';font-size:9px;color:#060e0a;font-weight:700;}
-.prog-item-txt{flex:1;}
-.prog-item-name{font-size:13px;color:var(--text);transition:color .2s;}
-.prog-item.done .prog-item-name{color:var(--text-dim);text-decoration:line-through;}
-.prog-item-note{font-size:10px;color:var(--text-dim);margin-top:2px;}
-.prog-add-row{display:flex;gap:8px;padding:8px 5px 4px;align-items:flex-start;}
-.prog-add-input{flex:1;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:4px;padding:7px 10px;color:var(--text);font-family:'Exo 2',sans-serif;font-size:12px;transition:border-color .2s;}
-.prog-add-input:focus{outline:none;border-color:var(--gold-dim);}
-.prog-add-input::placeholder{color:var(--text-dim);}
-.btn-add-sm{padding:5px 12px;background:rgba(201,162,39,.1);border:1px solid var(--gold-dim);color:var(--gold);border-radius:4px;cursor:pointer;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:11px;letter-spacing:1px;transition:all .2s;white-space:nowrap;margin-top:1px;}
-.btn-add-sm:hover{background:rgba(201,162,39,.2);}
+.fiss-filter-bar{display:flex;gap:6px;padding:8px 15px;border-bottom:1px solid var(--border);flex-wrap:wrap;align-items:center;background:rgba(255,255,255,.01);}
+.fiss-tb{padding:3px 10px;background:none;border:1px solid var(--border);border-radius:12px;cursor:pointer;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--text-dim);transition:all .2s;white-space:nowrap;}
+.fiss-tb:hover{border-color:var(--border2);color:var(--text);}
+.fiss-tb.act{color:var(--gold);border-color:var(--gold-dim);background:rgba(201,162,39,.07);}
+.fiss-tb.act-sp{color:var(--red);border-color:var(--red-dim);background:rgba(255,58,58,.07);}
+.fiss-tb.act-storm{color:var(--purple);border-color:rgba(176,96,255,.3);background:rgba(176,96,255,.07);}
 
 /* ══════════════════════════════════
    LOOT TRACKER V2 — REDESIGN
@@ -264,6 +274,7 @@ nav::-webkit-scrollbar{display:none;}
 .total-item{display:flex;align-items:center;gap:8px;padding:6px 10px;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:4px;}
 .total-qty{font-family:'Orbitron',monospace;font-size:12px;font-weight:700;color:var(--gold);min-width:28px;text-align:right;}
 .total-name{font-size:12px;color:var(--text-mid);}
+.loot-tags{margin-top:4px;display:flex;flex-wrap:wrap;gap:4px;}
 /* old table fallback */
 table{width:100%;border-collapse:collapse;min-width:700px;}
 thead tr{border-bottom:1px solid var(--border);}
@@ -398,6 +409,19 @@ td{padding:9px 11px;font-size:12px;color:var(--text);vertical-align:middle;}
 .bc-stat{display:flex;flex-direction:column;align-items:center;min-width:50px;}
 .bc-stat-v{font-family:'Orbitron',monospace;font-size:12px;font-weight:700;color:var(--cyan);}
 .bc-stat-k{font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--text-dim);margin-top:1px;}
+.bc-tags{margin:6px 0;display:flex;flex-wrap:wrap;gap:4px;}
+
+/* ══════════════════════════
+   WIDGET NAV + CLOUD SYNC
+══════════════════════════ */
+.widget-nav{background:none;border:none;color:var(--cyan);cursor:pointer;font-size:10px;padding:2px 7px;border-radius:3px;letter-spacing:.5px;transition:all .2s;font-family:'Rajdhani',sans-serif;font-weight:700;white-space:nowrap;}
+.widget-nav:hover{background:rgba(0,212,255,.1);color:var(--cyan2);}
+#cloud-status{font-size:13px;cursor:pointer;padding:4px 8px;border-radius:4px;transition:all .2s;letter-spacing:.5px;font-family:'Rajdhani',sans-serif;font-weight:700;}
+#cloud-status:hover{background:rgba(255,255,255,.06);}
+.cloud-setup{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:14px;margin-top:6px;display:flex;flex-direction:column;gap:10px;}
+.cloud-steps{font-size:11px;color:var(--text-mid);line-height:1.9;padding-left:4px;}
+.cloud-steps b{color:var(--gold);}
+.cloud-code{background:var(--bg);border:1px solid var(--border);border-radius:4px;padding:10px;font-family:'Orbitron',monospace;font-size:9px;color:var(--cyan);max-height:120px;overflow:auto;white-space:pre;user-select:all;line-height:1.6;}
 </style>
 </head>
 <body>
@@ -410,9 +434,12 @@ td{padding:9px 11px;font-size:12px;color:var(--text);vertical-align:middle;}
       <div class="logo-text">TENNO<span>COMPANION v2</span></div>
     </a>
     <div class="header-right">
+      <button class="hbtn" id="theme-btn" onclick="toggleTheme()" data-tooltip="Mode clair/sombre" title="Mode clair/sombre">🌓</button>
+      <button class="hbtn" data-tooltip="Aide rapide" onclick="openFAQ()">❓</button>
       <span id="ws-status">—</span>
-      <button class="hbtn" onclick="loadWS()">↻ WS</button>
-      <button class="hbtn cyan" onclick="openIO()">⬆⬇</button>
+      <span id="cloud-status" title="Cloud sync non configuré — cliquer pour configurer" onclick="openIO();setTimeout(()=>{const s=document.getElementById('cloud-section');if(s)s.scrollIntoView({behavior:'smooth'});},300)" style="color:var(--text-dim)">☁</span>
+      <button class="hbtn" onclick="loadWS()" data-tooltip="Rafraîchir World State">↻ WS</button>
+      <button class="hbtn cyan" onclick="openIO()" data-tooltip="Exporter / Importer les données">⬆⬇</button>
     </div>
   </div>
   <nav>
@@ -429,7 +456,7 @@ td{padding:9px 11px;font-size:12px;color:var(--text);vertical-align:middle;}
 <div class="tab-content active" id="tab-dashboard">
   <div class="dash-toolbar" id="dash-toolbar">
     <span style="font-size:11px;color:var(--text-dim);letter-spacing:.5px">Épingle des éléments depuis chaque onglet pour les voir ici</span>
-    <button class="btn-g" id="dash-reorder-btn" onclick="toggleReorderMode()">⠿ RÉORGANISER</button>
+    <button class="btn-g" id="dash-reorder-btn" onclick="toggleReorderMode()" data-tooltip="Glisser-déposer pour réordonner les widgets">⠿ RÉORGANISER</button>
   </div>
   <div class="dash-masonry" id="dash-masonry">
     <div class="dash-empty" id="dash-empty">
@@ -451,13 +478,26 @@ td{padding:9px 11px;font-size:12px;color:var(--text);vertical-align:middle;}
     <a class="qlink" href="https://riven.market" target="_blank">🔮 Riven.Market</a>
     <a class="qlink" href="https://drops.warframestat.us" target="_blank">💧 Drop Tables</a>
   </div>
+  <!-- Fissure filter bar -->
+  <div class="fiss-filter-bar">
+    <span style="font-size:9px;color:var(--text-dim);letter-spacing:1.5px;font-family:'Rajdhani',sans-serif;font-weight:700;flex-shrink:0">TIER :</span>
+    <button class="fiss-tb act" onclick="setFissTier('all')">ALL</button>
+    <button class="fiss-tb" onclick="setFissTier('Lith')" style="color:var(--lith)">LITH</button>
+    <button class="fiss-tb" onclick="setFissTier('Meso')" style="color:var(--meso)">MESO</button>
+    <button class="fiss-tb" onclick="setFissTier('Neo')" style="color:var(--neo)">NEO</button>
+    <button class="fiss-tb" onclick="setFissTier('Axi')" style="color:var(--axi)">AXI</button>
+    <button class="fiss-tb" onclick="setFissTier('Requiem')" style="color:var(--req)">REQUIEM</button>
+    <div style="width:1px;height:14px;background:var(--border);margin:0 2px;flex-shrink:0"></div>
+    <button class="fiss-tb" id="fiss-sp-btn" onclick="toggleFissSP()">🔱 SP</button>
+    <button class="fiss-tb" id="fiss-storm-btn" onclick="toggleFissStorms()">⚡ STORMS</button>
+  </div>
   <div class="ws-grid">
-    <div class="ws-card"><div class="ws-head"><span class="ws-title">VOID FISSURES</span><div style="display:flex;align-items:center;gap:6px"><span id="fiss-cnt" class="badge b-cyan">—</span><button class="pin-btn" data-action="pin-ws" data-id="fissures">📌</button></div></div><div class="ws-body" id="fiss-body"><div class="loading">Chargement...</div></div></div>
-    <div class="ws-card"><div class="ws-head"><span class="ws-title">SORTIE</span><div style="display:flex;align-items:center;gap:6px"><span class="timer" id="sort-t">—</span><button class="pin-btn" data-action="pin-ws" data-id="sortie">📌</button></div></div><div class="ws-body" id="sort-body"><div class="loading">Chargement...</div></div></div>
-    <div class="ws-card"><div class="ws-head"><span class="ws-title">BARO KI'TEER</span><div style="display:flex;align-items:center;gap:6px"><span class="timer" id="baro-t">—</span><button class="pin-btn" data-action="pin-ws" data-id="baro">📌</button></div></div><div class="ws-body" id="baro-body"><div class="loading">Chargement...</div></div></div>
-    <div class="ws-card"><div class="ws-head"><span class="ws-title">ARBITRATION</span><div style="display:flex;align-items:center;gap:6px"><span class="timer" id="arbi-t">—</span><button class="pin-btn" data-action="pin-ws" data-id="arbi">📌</button></div></div><div class="ws-body" id="arbi-body"><div class="loading">Chargement...</div></div></div>
-    <div class="ws-card"><div class="ws-head"><span class="ws-title">NIGHTWAVE</span><div style="display:flex;align-items:center;gap:6px"><span class="timer" id="nw-t">—</span><button class="pin-btn" data-action="pin-ws" data-id="nightwave">📌</button></div></div><div class="ws-body" id="nw-body"><div class="loading">Chargement...</div></div></div>
-    <div class="ws-card"><div class="ws-head"><span class="ws-title">INVASIONS</span><div style="display:flex;align-items:center;gap:6px"><span id="inv-cnt" class="badge b-orange">—</span><button class="pin-btn" data-action="pin-ws" data-id="invasions">📌</button></div></div><div class="ws-body" id="inv-body"><div class="loading">Chargement...</div></div></div>
+    <div class="ws-card"><div class="ws-head"><span class="ws-title">VOID FISSURES</span><div style="display:flex;align-items:center;gap:6px"><span id="fiss-cnt" class="badge b-cyan">—</span><button class="pin-btn" data-action="pin-ws" data-id="fissures" data-tooltip="Épingler sur le Dashboard">📌</button></div></div><div class="ws-body" id="fiss-body"><div class="loading">Chargement...</div></div></div>
+    <div class="ws-card"><div class="ws-head"><span class="ws-title">SORTIE</span><div style="display:flex;align-items:center;gap:6px"><span class="timer" id="sort-t" data-tooltip="Temps restant avant la prochaine rotation">—</span><button class="pin-btn" data-action="pin-ws" data-id="sortie" data-tooltip="Épingler sur le Dashboard">📌</button></div></div><div class="ws-body" id="sort-body"><div class="loading">Chargement...</div></div></div>
+    <div class="ws-card"><div class="ws-head"><span class="ws-title">BARO KI'TEER</span><div style="display:flex;align-items:center;gap:6px"><span class="timer" id="baro-t" data-tooltip="Baro arrive / part">—</span><button class="pin-btn" data-action="pin-ws" data-id="baro" data-tooltip="Épingler sur le Dashboard">📌</button></div></div><div class="ws-body" id="baro-body"><div class="loading">Chargement...</div></div></div>
+    <div class="ws-card"><div class="ws-head"><span class="ws-title">ARBITRATION</span><div style="display:flex;align-items:center;gap:6px"><span class="timer" id="arbi-t" data-tooltip="Prochaine arbitration">—</span><button class="pin-btn" data-action="pin-ws" data-id="arbi" data-tooltip="Épingler sur le Dashboard">📌</button></div></div><div class="ws-body" id="arbi-body"><div class="loading">Chargement...</div></div></div>
+    <div class="ws-card"><div class="ws-head"><span class="ws-title">NIGHTWAVE</span><div style="display:flex;align-items:center;gap:6px"><span class="timer" id="nw-t" data-tooltip="Fin de la saison Nightwave">—</span><button class="pin-btn" data-action="pin-ws" data-id="nightwave" data-tooltip="Épingler sur le Dashboard">📌</button></div></div><div class="ws-body" id="nw-body"><div class="loading">Chargement...</div></div></div>
+    <div class="ws-card"><div class="ws-head"><span class="ws-title">INVASIONS</span><div style="display:flex;align-items:center;gap:6px"><span id="inv-cnt" class="badge b-orange">—</span><button class="pin-btn" data-action="pin-ws" data-id="invasions" data-tooltip="Épingler sur le Dashboard">📌</button></div></div><div class="ws-body" id="inv-body"><div class="loading">Chargement...</div></div></div>
   </div>
 </div>
 
@@ -465,13 +505,20 @@ td{padding:9px 11px;font-size:12px;color:var(--text);vertical-align:middle;}
 <div class="tab-content" id="tab-builds">
   <div class="toolbar">
     <button class="btn-p" onclick="openBuildModal()">+ NOUVEAU BUILD</button>
-    <input class="inp" style="width:210px" type="text" placeholder="Rechercher..." id="build-q" oninput="renderBuilds()">
+    <input class="inp" style="width:210px" type="text" placeholder="Nom / contexte / notes..." id="build-q" oninput="renderBuilds()">
+    <input class="inp" style="width:180px" type="text" placeholder="Filtre tags (ex: Steel Path)" id="build-tag-q" oninput="renderBuilds()">
     <button class="btn-g act" id="bf-all" onclick="setBF('all')">TOUS</button>
     <button class="btn-g" id="bf-warframe" onclick="setBF('warframe')">WARFRAMES</button>
     <button class="btn-g" id="bf-primary" onclick="setBF('primary')">PRIMAIRE</button>
     <button class="btn-g" id="bf-secondary" onclick="setBF('secondary')">SECONDAIRE</button>
     <button class="btn-g" id="bf-melee" onclick="setBF('melee')">MÊLÉE</button>
     <button class="btn-g" id="bf-companion" onclick="setBF('companion')">COMPAGNON</button>
+    <div style="width:1px;height:20px;background:var(--border);margin:0 4px;flex-shrink:0"></div>
+    <select class="sel" id="build-sort" onchange="renderBuilds()" style="width:130px;padding:6px 10px;font-size:11px">
+      <option value="date-desc">🕒 Récent d'abord</option>
+      <option value="date-asc">🕒 Ancien d'abord</option>
+      <option value="name">🔤 Nom A–Z</option>
+    </select>
   </div>
   <div class="builds-grid" id="builds-grid"></div>
 </div>
@@ -490,10 +537,15 @@ td{padding:9px 11px;font-size:12px;color:var(--text);vertical-align:middle;}
     <button class="btn-g lf"     data-f="primary"   onclick="setLF('primary')">PRIMAIRE</button>
     <button class="btn-g lf"     data-f="secondary" onclick="setLF('secondary')">SECONDAIRE</button>
     <button class="btn-g lf"     data-f="melee"     onclick="setLF('melee')">MÊLÉE</button>
+    <button class="btn-g lf"     data-f="companion" onclick="setLF('companion')">COMPAGNON</button>
+    <button class="btn-g lf"     data-f="mod"       onclick="setLF('mod')">MOD</button>
     <button class="btn-g lf"     data-f="other"     onclick="setLF('other')">AUTRE</button>
     <div style="width:1px;height:20px;background:var(--border);margin:0 4px;flex-shrink:0"></div>
     <button class="btn-g lf"     data-f="farming"   onclick="setLF('farming')">EN FARM 🔁</button>
     <button class="btn-g lf"     data-f="done"      onclick="setLF('done')">OBTENUS ✓</button>
+    <div style="width:1px;height:20px;background:var(--border);margin:0 4px;flex-shrink:0"></div>
+    <input class="inp" style="width:210px" type="text" placeholder="Filtre nom / notes..." id="loot-q" oninput="renderLoot()">
+    <input class="inp" style="width:180px" type="text" placeholder="Filtre tags (ex: Steel Path)" id="loot-tag-q" oninput="renderLoot()">
   </div>
 
   <div class="loot-wrap" id="loot-wrap-main">
@@ -527,6 +579,7 @@ td{padding:9px 11px;font-size:12px;color:var(--text);vertical-align:middle;}
     <div class="form-group"><label class="form-label">Priorité</label>
       <select class="sel" id="loot-prio" style="width:110px"><option value="high">Haute</option><option value="med" selected>Moyenne</option><option value="low">Basse</option></select>
     </div>
+    <div class="form-group"><label class="form-label">Tags</label><input class="inp" id="loot-tags" placeholder="Steel Path, Eidolon..." style="width:150px"></div>
     <div class="form-group"><label class="form-label">Notes</label><input class="inp" id="loot-note" placeholder="Optionnel..." style="width:150px"></div>
     <div class="form-group"><label class="form-label">&nbsp;</label><button class="btn-p" onclick="addLoot()">AJOUTER</button></div>
   </div>
@@ -546,6 +599,8 @@ td{padding:9px 11px;font-size:12px;color:var(--text);vertical-align:middle;}
   <div class="toolbar">
     <button class="btn-p" onclick="addBlock('note')">📝 NOUVELLE NOTE</button>
     <button class="btn-p" onclick="addBlock('objective')" style="background:linear-gradient(135deg,#0a2535,var(--cyan-dim));color:var(--cyan);border:1px solid var(--cyan-dim)">☑ NOUVEL OBJECTIF</button>
+    <div style="flex:1;min-width:20px"></div>
+    <input class="inp" style="width:200px" type="text" placeholder="🔍 Rechercher..." id="notes-q" oninput="renderNotes()">
   </div>
   <div class="notes-grid" id="notes-grid"></div>
 </div>
@@ -572,6 +627,11 @@ td{padding:9px 11px;font-size:12px;color:var(--text);vertical-align:middle;}
           ↗ Build Overframe détecté
         </div>
       </div>
+      <div class="form-group">
+        <label class="form-label">Tags (optionnel)</label>
+        <input class="inp" id="b-tags" placeholder="Steel Path, Eidolon, Archon...">
+        <div style="font-size:10px;color:var(--text-dim);margin-top:4px;">Sépare les tags avec des virgules.</div>
+      </div>
       <div class="form-group"><label class="form-label">Notes personnelles</label><textarea class="ta" id="b-notes" placeholder="Pourquoi ce build, quand l'utiliser, mods essentiels, astuces..."></textarea></div>
     </div>
     <div class="modal-foot">
@@ -581,28 +641,7 @@ td{padding:9px 11px;font-size:12px;color:var(--text);vertical-align:middle;}
   </div>
 </div>
 
-<!-- ══════════════════════════ PROGRESSION ADD MODAL (resources) ══════════════════════════ -->
-<div class="modal-bg" id="prog-modal">
-  <div class="modal">
-    <div class="modal-head"><span class="modal-title">AJOUTER À LA PROGRESSION</span><button class="modal-x" onclick="closePModal()">✕</button></div>
-    <div class="modal-body">
-      <div id="pm-item-info" style="display:flex;align-items:center;gap:12px;padding:10px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;">
-        <img id="pm-img" src="" style="width:44px;height:44px;object-fit:contain;background:var(--bg3);border-radius:4px;" onerror="this.style.display='none'">
-        <div><div id="pm-name" style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:15px;color:var(--text);"></div><div id="pm-type" style="font-size:11px;color:var(--text-dim);margin-top:2px;"></div></div>
-      </div>
-      <div id="pm-resources">
-        <div style="font-size:11px;color:var(--text-dim);text-align:center;padding:16px 0;">Aucune donnée de craft disponible pour cet item.</div>
-      </div>
-      <label style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text-mid);cursor:pointer;">
-        <input type="checkbox" id="pm-add-loot" style="width:14px;height:14px;accent-color:var(--gold)"> Ajouter automatiquement les ressources manquantes au Loot Tracker
-      </label>
-    </div>
-    <div class="modal-foot">
-      <button class="btn-g" onclick="closePModal()">ANNULER</button>
-      <button class="btn-p" onclick="confirmProgAdd()">CONFIRMER</button>
-    </div>
-  </div>
-</div>
+<!-- prog-modal removed — dead code -->
 
 <!-- ══════════════════════════ EXPORT/IMPORT MODAL ══════════════════════════ -->
 <div class="modal-bg" id="io-modal">
@@ -624,6 +663,52 @@ td{padding:9px 11px;font-size:12px;color:var(--text);vertical-align:middle;}
         <textarea class="ta" id="io-paste" placeholder="...ou colle directement ton JSON ici" style="margin-top:8px;min-height:80px;font-family:monospace;font-size:11px;"></textarea>
         <button class="btn-p" style="margin-top:8px" onclick="importFromPaste()">⬆ IMPORTER LE JSON COLLÉ</button>
       </div>
+      <!-- ── CLOUD SYNC ── -->
+      <div class="form-group" id="cloud-section" style="margin-top:6px;padding-top:10px;border-top:1px solid var(--border)">
+        <label class="form-label" style="color:var(--cyan)">☁ SYNC CLOUD (Google Sheets)</label>
+        <div style="font-size:12px;color:var(--text-dim);margin-bottom:8px;">Sauvegarde et restaure tes données depuis un Google Sheet via Apps Script.</div>
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;">
+          <input class="inp" id="cloud-url-input" placeholder="https://script.google.com/macros/s/..." style="flex:1;font-size:11px" oninput="">
+          <button class="btn-g" onclick="saveCloudConfig()">SAUVER URL</button>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px;">
+          <button class="btn-p" onclick="cloudSave()" style="font-size:11px">⬆ SAUVEGARDER</button>
+          <button class="btn-g" onclick="cloudLoad(true)" style="font-size:11px">⬇ CHARGER</button>
+          <label style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text-dim);cursor:pointer;margin-left:6px">
+            <input type="checkbox" id="cloud-auto" style="accent-color:var(--cyan);width:13px;height:13px" onchange="setCloudAuto(this.checked)">
+            Auto-sync (5 min)
+          </label>
+        </div>
+        <!-- Setup instructions -->
+        <details style="margin-top:4px">
+          <summary style="font-size:11px;color:var(--text-dim);cursor:pointer;user-select:none;letter-spacing:.5px">⚙ Comment configurer Google Sheets (cliquer pour voir)</summary>
+          <div class="cloud-setup">
+            <div class="cloud-steps">
+              <b>1.</b> Crée un nouveau Google Sheet (sheets.google.com)<br>
+              <b>2.</b> Menu <b>Extensions → Apps Script</b><br>
+              <b>3.</b> Remplace tout le code par celui ci-dessous<br>
+              <b>4.</b> Clique <b>Déployer → Nouvelle déploiement</b><br>
+              <b>5.</b> Type : <b>Application Web</b> · Exécuter en tant que : <b>Moi</b> · Accès : <b>Tout le monde</b><br>
+              <b>6.</b> Copie l'URL dans le champ ci-dessus
+            </div>
+            <div class="cloud-code" id="cloud-code-block">function doGet(e) {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  var val = sheet.getRange('A1').getValue();
+  return ContentService.createTextOutput(val || '{}')
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+function doPost(e) {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  sheet.getRange('A1').setValue(e.postData.contents);
+  return ContentService.createTextOutput('{"ok":true}')
+    .setMimeType(ContentService.MimeType.JSON);
+}</div>
+            <button class="btn-g" onclick="copyCloudCode()" style="font-size:10px;padding:4px 10px">📋 COPIER LE CODE</button>
+          </div>
+        </details>
+      </div>
+
       <div class="form-group" style="margin-top:6px;padding-top:10px;border-top:1px solid var(--border)">
         <label class="form-label" style="color:var(--red)">⚠ Zone dangereuse</label>
         <div style="font-size:12px;color:var(--text-dim);margin-bottom:8px;">Supprime <strong style="color:var(--red)">toutes</strong> les données locales (builds, loot, notes). Action irréversible — exporte d'abord.</div>
@@ -632,6 +717,40 @@ td{padding:9px 11px;font-size:12px;color:var(--text);vertical-align:middle;}
       <div id="io-msg" style="font-size:12px;display:none;padding:8px 12px;border-radius:4px;margin-top:8px;"></div>
     </div>
     <div class="modal-foot"><button class="btn-g" onclick="closeIO()">FERMER</button></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════ FAQ / AIDE ══════════════════════════ -->
+<div class="modal-bg" id="faq-modal">
+  <div class="modal" style="max-width:560px">
+    <div class="modal-head"><span class="modal-title">❓ AIDE RAPIDE</span><button class="modal-x" onclick="closeFAQ()">✕</button></div>
+    <div class="modal-body" style="max-height:65vh;overflow-y:auto">
+      <div class="faq-item">
+        <div class="faq-q">📌 Pin / Épingler</div>
+        <div class="faq-a">Clique sur le bouton <strong>📌</strong> à côté d'un build, loot, note ou carte World State pour l'afficher sur ton Dashboard. Clique à nouveau pour retirer.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">⏱ Timers</div>
+        <div class="faq-a">Les timers (Sortie, Baro, Arbitration, Nightwave) affichent le temps restant. <em>Rouge</em> = moins de 1 h, <em>Orange</em> = moins de 6 h.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">🏷 Tags</div>
+        <div class="faq-a">Ajoute des tags (ex: Steel Path, Eidolon) aux builds et au loot pour mieux les organiser. Filtre ensuite par tag dans les champs dédiés.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">🔍 Filtres</div>
+        <div class="faq-a">Utilise les champs de recherche (nom, notes) et le filtre tags pour affiner la liste des builds et du loot.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">🌓 Thème</div>
+        <div class="faq-a">Le bouton <strong>🌓</strong> en haut à droite bascule entre mode sombre (par défaut) et mode clair.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">⬆⬇ Export / Import</div>
+        <div class="faq-a">Sauvegarde tes données en JSON ou restaure-les depuis un autre appareil. Données stockées localement dans ton navigateur.</div>
+      </div>
+    </div>
+    <div class="modal-foot"><button class="btn-g" onclick="closeFAQ()">FERMER</button></div>
   </div>
 </div>
 
@@ -779,10 +898,29 @@ function acClick(listId, idx) {
 function acKey(e, target) {
   const listId = target === 'build' ? 'build-ac' : 'loot-ac';
   const list = document.getElementById(listId);
-  if (e.key === 'Escape') { list.style.display = 'none'; }
-  if (e.key === 'Enter' && list.style.display !== 'none') {
-    const first = list.querySelector('.ac-item');
-    if (first) { first.click(); e.preventDefault(); }
+  if (e.key === 'Escape') { list.style.display = 'none'; return; }
+  if (list.style.display === 'none') return;
+  const items = list.querySelectorAll('.ac-item');
+  if (!items.length) return;
+  const cur = list.querySelector('.ac-item.sel');
+  const idx = cur ? [...items].indexOf(cur) : -1;
+  if (e.key === 'ArrowDown') {
+    e.preventDefault();
+    cur?.classList.remove('sel');
+    const next = items[Math.min(idx + 1, items.length - 1)];
+    next.classList.add('sel');
+    next.scrollIntoView({block:'nearest'});
+  } else if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    cur?.classList.remove('sel');
+    if (idx <= 0) return;
+    const prev = items[idx - 1];
+    prev.classList.add('sel');
+    prev.scrollIntoView({block:'nearest'});
+  } else if (e.key === 'Enter') {
+    e.preventDefault();
+    const selected = cur || items[0];
+    if (selected) selected.click();
   }
 }
 
@@ -817,10 +955,15 @@ function selectLootItem(item) {
   // Auto-detect category
   const t = (item.type||'').toLowerCase();
   const sel = document.getElementById('loot-cat');
-  if (t.includes('warframe') || t.includes('frame part')) sel.value = 'Warframe';
-  else if (t.includes('weapon') || t.includes('primary') || t.includes('secondary') || t.includes('melee')) sel.value = 'Arme';
-  else if (t.includes('mod')) sel.value = 'Mod';
-  else sel.value = 'Ressource';
+  if (t.includes('warframe') || t.includes('frame')) sel.value = 'warframe';
+  else if (t.includes('primary') || t.includes('rifle') || t.includes('shotgun') || t.includes('sniper') || t.includes('bow')) sel.value = 'primary';
+  else if (t.includes('secondary') || t.includes('pistol') || t.includes('thrown')) sel.value = 'secondary';
+  else if (t.includes('melee') || t.includes('sword') || t.includes('blade')) sel.value = 'melee';
+  else if (t.includes('sentinel') || t.includes('companion') || t.includes('animal') || t.includes('kubrow') || t.includes('kavat')) sel.value = 'companion';
+  else if (t.includes('arch')) sel.value = 'archwing';
+  else if (t.includes('mod')) sel.value = 'mod';
+  else if (t.includes('resource')) sel.value = 'resource';
+  else sel.value = 'other';
 }
 
 // ═══════════════════════════════════════════════
@@ -829,6 +972,32 @@ function selectLootItem(item) {
 const WS = 'https://api.warframestat.us/pc';
 const TIER_CLS = {Lith:'b-lith',Meso:'b-meso',Neo:'b-neo',Axi:'b-axi',Requiem:'b-req',Omnia:'b-gold'};
 const TIER_ORD = ['Lith','Meso','Neo','Axi','Requiem','Omnia'];
+
+// Fissure filter state
+let fissFilter = { tier: 'all', sp: false, storms: false };
+
+function setFissTier(tier) {
+  fissFilter.tier = tier;
+  document.querySelectorAll('.fiss-tb:not(#fiss-sp-btn):not(#fiss-storm-btn)').forEach(b => b.classList.remove('act'));
+  const clicked = [...document.querySelectorAll('.fiss-tb')].find(b => {
+    const label = b.textContent.trim().toUpperCase();
+    return (tier === 'all' && label === 'ALL') || label === tier.toUpperCase();
+  });
+  clicked?.classList.add('act');
+  renderFiss(wsCache.fissures || null);
+}
+
+function toggleFissSP() {
+  fissFilter.sp = !fissFilter.sp;
+  document.getElementById('fiss-sp-btn')?.classList.toggle('act-sp', fissFilter.sp);
+  renderFiss(wsCache.fissures || null);
+}
+
+function toggleFissStorms() {
+  fissFilter.storms = !fissFilter.storms;
+  document.getElementById('fiss-storm-btn')?.classList.toggle('act-storm', fissFilter.storms);
+  renderFiss(wsCache.fissures || null);
+}
 
 async function fetchWS(endpoint) {
   const ctrl = new AbortController();
@@ -870,12 +1039,17 @@ async function loadWS() {
 function renderFiss(data) {
   const el = document.getElementById('fiss-body'), cnt = document.getElementById('fiss-cnt');
   if (!Array.isArray(data) || !data.length) { el.innerHTML = '<div class="err-msg">Indisponible</div>'; return; }
-  // API sometimes omits 'active' field — treat all returned fissures as active
-  // Also filter out expired ones
   const now = Date.now();
-  const active = data.filter(f => !f.isStorm && new Date(f.expiry) > now);
+  let active = data.filter(f => new Date(f.expiry) > now);
+  // Apply storms toggle — by default exclude void storms
+  if (!fissFilter.storms) active = active.filter(f => !f.isStorm);
+  else if (fissFilter.storms) {} // show all including storms
+  // Apply SP filter
+  if (fissFilter.sp) active = active.filter(f => f.isHard);
+  // Apply tier filter
+  if (fissFilter.tier !== 'all') active = active.filter(f => f.tier === fissFilter.tier);
   cnt.textContent = active.length;
-  if (!active.length) { el.innerHTML = '<div class="loading" style="color:var(--green)">Aucune fissure active</div>'; return; }
+  if (!active.length) { el.innerHTML = '<div class="loading" style="color:var(--green)">Aucune fissure</div>'; return; }
   const byTier = {}; TIER_ORD.forEach(t => byTier[t] = []);
   active.forEach(f => {
     const tier = f.tier || 'Lith';
@@ -886,11 +1060,12 @@ function renderFiss(data) {
   TIER_ORD.forEach(tier => (byTier[tier]||[]).forEach(f => {
     const expMs = (parseExpiry(f.expiry) || new Date(0)).getTime();
     const ms = expMs - now, tid = `ft-${f.id}`;
-    const storm = f.isHard ? ' <span class="badge b-purple" style="font-size:8px">SP</span>' : '';
-    h += `<div class="fiss-row"><div class="fiss-info"><div class="fiss-node">${f.node||'—'}${storm}</div><div class="fiss-sub">${f.missionType||''} · ${f.enemy||''}</div></div><div class="fiss-tags"><span class="badge ${TIER_CLS[tier]||'b-cyan'}">${tier}</span><span class="timer" id="${tid}">${fmt(ms)}</span></div></div>`;
+    const spBadge = f.isHard ? ' <span class="badge b-purple" style="font-size:8px">SP</span>' : '';
+    const stormBadge = f.isStorm ? ' <span class="badge b-cyan" style="font-size:8px">STORM</span>' : '';
+    h += `<div class="fiss-row"><div class="fiss-info"><div class="fiss-node">${f.node||'—'}${spBadge}${stormBadge}</div><div class="fiss-sub">${f.missionType||''} · ${f.enemy||''}</div></div><div class="fiss-tags"><span class="badge ${TIER_CLS[tier]||'b-cyan'}">${tier}</span><span class="timer" id="${tid}">${fmt(ms)}</span></div></div>`;
     timers[tid] = {expiry: expMs, el: null};
   }));
-  el.innerHTML = h || '<div class="loading" style="color:var(--green)">Aucune fissure active</div>';
+  el.innerHTML = h || '<div class="loading" style="color:var(--green)">Aucune fissure</div>';
 }
 
 function renderSort(data) {
@@ -971,7 +1146,19 @@ function renderInv(data) {
 // ═══════════════════════════════════════════════
 // BUILDS V2
 // ═══════════════════════════════════════════════
+function parseTags(raw) {
+  if (!raw) return [];
+  return raw.split(/[,#]/)
+    .map(t => t.trim())
+    .filter(t => t && t.length > 0)
+    .slice(0, 10);
+}
+
 let builds = ld(K.builds) || [];
+builds = (builds || []).map(b => ({
+  ...b,
+  tags: Array.isArray(b.tags) ? b.tags.filter(t => t && typeof t === 'string') : []
+}));
 let bModal_id = null;
 let buildFilter = 'all';
 
@@ -986,9 +1173,10 @@ function openBuildModal(id=null) {
     document.getElementById('b-ctx').value = b.ctx||'';
     document.getElementById('b-url').value = b.url||'';
     document.getElementById('b-notes').value = b.notes||'';
+    document.getElementById('b-tags').value = Array.isArray(b.tags) ? b.tags.join(', ') : '';
     parseOFUrl(b.url||'');
   } else {
-    ['b-name','b-ctx','b-url','b-notes'].forEach(id => document.getElementById(id).value = '');
+    ['b-name','b-ctx','b-url','b-notes','b-tags'].forEach(id => document.getElementById(id).value = '');
     document.getElementById('b-type').value = 'warframe';
     document.getElementById('of-preview').style.display = 'none';
   }
@@ -1018,6 +1206,7 @@ async function saveBuild() {
   if (!name) { document.getElementById('b-name').focus(); return; }
   const url = document.getElementById('b-url').value.trim();
   let imageName = '';
+  const tags = parseTags(document.getElementById('b-tags').value);
   try {
     const dbItem = await getItem(name);
     imageName = dbItem?.imageName || '';
@@ -1028,6 +1217,7 @@ async function saveBuild() {
     type: document.getElementById('b-type').value,
     ctx: document.getElementById('b-ctx').value.trim(),
     notes: document.getElementById('b-notes').value.trim(),
+    tags,
     imageName,
     createdAt: bModal_id ? (builds.find(b=>b.id===bModal_id)?.createdAt || Date.now()) : Date.now()
   };
@@ -1062,12 +1252,29 @@ function setBF(f) {
   renderBuilds();
 }
 
+let buildSort = 'date-desc';
+
 function renderBuilds() {
   const grid = document.getElementById('builds-grid');
   const q = document.getElementById('build-q').value.toLowerCase();
+  const tq = (document.getElementById('build-tag-q')?.value || '').toLowerCase();
+  buildSort = document.getElementById('build-sort')?.value || buildSort;
   let list = builds;
   if (buildFilter !== 'all') list = list.filter(b => b.type === buildFilter);
-  if (q) list = list.filter(b => b.name.toLowerCase().includes(q) || (b.ctx||'').toLowerCase().includes(q) || (b.notes||'').toLowerCase().includes(q));
+  if (q) {
+    list = list.filter(b =>
+      b.name.toLowerCase().includes(q) ||
+      (b.ctx||'').toLowerCase().includes(q) ||
+      (b.notes||'').toLowerCase().includes(q)
+    );
+  }
+  if (tq) {
+    list = list.filter(b => Array.isArray(b.tags) && b.tags.some(t => t.toLowerCase().includes(tq)));
+  }
+  // Sort
+  if (buildSort === 'name') list = [...list].sort((a,b) => a.name.localeCompare(b.name));
+  else if (buildSort === 'date-asc') list = [...list].sort((a,b) => (a.createdAt||0) - (b.createdAt||0));
+  else list = [...list].sort((a,b) => (b.createdAt||0) - (a.createdAt||0));
 
   if (!list.length) {
     grid.innerHTML = `<div class="empty" style="grid-column:1/-1"><div class="ei">⚙️</div><p>${builds.length===0 ? 'Aucun build — clique sur + NOUVEAU BUILD' : 'Aucun résultat'}</p></div>`;
@@ -1088,6 +1295,9 @@ function renderBuilds() {
     } else if (b.url) {
       statsHtml = `<button class="of-link" style="margin:0 0 8px;font-size:10px;color:var(--text-dim);border-color:var(--border)" data-action="fetch-stats" data-id="${b.id}">✨ Charger stats OF</button>`;
     }
+    const tagsHtml = (b.tags && b.tags.length)
+      ? `<div class="bc-tags">${b.tags.map(t => `<span class="badge b-gray">${esc(t)}</span>`).join('')}</div>`
+      : '';
     return `<div class="build-card" data-action="edit-build" data-id="${b.id}">
       ${img}
       <div class="bc-top">
@@ -1096,6 +1306,7 @@ function renderBuilds() {
       </div>
       <div class="bc-body">
         ${statsHtml}
+        ${tagsHtml}
         <div class="bc-notes">${b.notes||'<span style="color:var(--text-dim);font-style:italic">Aucune note</span>'}</div>
       </div>
       <div class="bc-foot">
@@ -1122,13 +1333,11 @@ progData = progData.filter(s => !['quests','mastery','divers'].includes(s.id));
 if (!progData.find(s => s.id === 'frames')) progData.unshift({id:'frames', title:'WARFRAMES À ACQUÉRIR', color:'var(--gold)', items:[]});
 if (!progData.find(s => s.id === 'armes'))  progData.push({id:'armes', title:'ARMES À DÉBLOQUER', color:'var(--cyan)', items:[]});
 
-let pendingProgItem = null; // for the resources modal
-
 function saveProg() { sv(K.prog, progData); }
 
 function renderProg() {
   const wrap = document.getElementById('prog-wrap');
-  if (!wrap) return; // prog-wrap removed from DOM — progression lives in Notes tab now
+  if (!wrap) return; // dead — prog-wrap removed from DOM
   wrap.innerHTML = progData.map(sec => {
     const done = sec.items.filter(i => i.done).length, total = sec.items.length;
     const pct = total ? Math.round(done/total*100) : 0;
@@ -1403,6 +1612,10 @@ function removeProgItem(secId, itemId) {
 // LOOT TRACKER V2 — REDESIGN
 // ═══════════════════════════════════════════════
 let lootItems = ld(K.loot) || [];
+lootItems = (lootItems || []).map(i => ({
+  ...i,
+  tags: Array.isArray(i.tags) ? i.tags.filter(t => t && typeof t === 'string') : []
+}));
 let lootFilter = 'all';
 
 function saveLoot() { sv(K.loot, lootItems); }
@@ -1422,6 +1635,7 @@ async function addLoot() {
   if (!name) { document.getElementById('loot-name').focus(); return; }
   const dbItem = await getItem(name);
   const craftData = dbItem ? extractCraftData(dbItem) : null;
+  const tags = parseTags(document.getElementById('loot-tags').value);
 
   // Auto-detect category from API if possible
   let cat = document.getElementById('loot-cat').value;
@@ -1443,11 +1657,12 @@ async function addLoot() {
     status: 'pending',
     notes: document.getElementById('loot-note').value.trim(),
     craftData,
+    tags,
     imageName: dbItem?.imageName || ''
   };
   lootItems.push(item);
   saveLoot(); renderLoot();
-  ['loot-name','loot-src','loot-note'].forEach(id => document.getElementById(id).value = '');
+  ['loot-name','loot-src','loot-note','loot-tags'].forEach(id => document.getElementById(id).value = '');
 }
 
 function extractCraftData(dbItem) {
@@ -1536,6 +1751,8 @@ function renderLoot() {
   const empty = document.getElementById('loot-empty');
 
   let list = lootItems;
+  const q = (document.getElementById('loot-q')?.value || '').toLowerCase();
+  const tq = (document.getElementById('loot-tag-q')?.value || '').toLowerCase();
   // Category filters
   if (CAT_KEYS.includes(lootFilter)) {
     if (lootFilter === 'other') {
@@ -1545,6 +1762,23 @@ function renderLoot() {
     }
   } else if (lootFilter === 'farming') list = list.filter(i => i.status === 'farming');
   else if (lootFilter === 'done')    list = list.filter(i => i.status === 'done');
+
+  if (q) {
+    list = list.filter(i =>
+      i.name.toLowerCase().includes(q) ||
+      (i.notes||'').toLowerCase().includes(q) ||
+      (i.source||'').toLowerCase().includes(q)
+    );
+  }
+  if (tq) {
+    list = list.filter(i => Array.isArray(i.tags) && i.tags.some(t => t.toLowerCase().includes(tq)));
+  }
+
+  // Snapshot open mat panels before re-render
+  const openMats = new Set();
+  craftSec.querySelectorAll('[id^="mat-"]').forEach(el => {
+    if (el.style.display !== 'none') openMats.add(el.id.slice(4));
+  });
 
   if (!list.length) {
     craftSec.innerHTML = '';
@@ -1574,11 +1808,15 @@ function renderLoot() {
     const catKey = (item.cat||'other').toLowerCase();
     const catBadge = CAT_BADGE[catKey] || 'b-gray';
     const catLabel = CAT_LABEL[catKey] || (item.cat||'—');
+    const tagsHtml = (item.tags && item.tags.length)
+      ? `<div class="loot-tags">${item.tags.map(t => `<span class="badge b-gray">${esc(t)}</span>`).join('')}</div>`
+      : '';
 
     h += `<tr style="${statusDone?'opacity:.5':''}">
       <td>${item.imageName ? `<img src="${imgUrl(item.imageName)}" style="width:28px;height:28px;object-fit:contain;border-radius:3px;background:var(--bg3)" onerror="this.style.display='none'">` : ''}</td>
       <td style="font-weight:500;${statusDone?'text-decoration:line-through;color:var(--text-dim)':''}">${item.name}
         ${item.notes?`<div style="font-size:10px;color:var(--text-dim)">${item.notes}</div>`:''}
+        ${tagsHtml}
       </td>
       <td><span class="badge ${catBadge}" style="font-size:8px">${catLabel}</span></td>
       <td>
@@ -1640,6 +1878,15 @@ function renderLoot() {
   });
   h += `</tbody></table>`;
   craftSec.innerHTML = h;
+  // Restore previously open mat panels
+  openMats.forEach(id => {
+    const panel = document.getElementById('mat-' + id);
+    if (panel) {
+      panel.style.display = '';
+      const btn = craftSec.querySelector(`[data-action="toggle-mat"][data-id="${id}"]`);
+      if (btn) btn.textContent = '▲ Fermer';
+    }
+  });
 
   // TOTALS — aggregate raw materials from all non-done items
   const totals = {};
@@ -1679,8 +1926,40 @@ function toggleCraftOLD() {}
 // ═══════════════════════════════════════════════
 let newsLoaded = false;
 
+function renderNewsData(data, grid) {
+  const sorted = [...data].sort((a,b) => new Date(b.date) - new Date(a.date));
+  grid.innerHTML = sorted.slice(0, 24).map(n => {
+    const date = new Date(n.date).toLocaleDateString('fr-BE', {day:'2-digit',month:'short',year:'numeric'});
+    const img = n.imageLink || n.thumbnail || '';
+    const tags = [];
+    if (n.update)  tags.push('<span class="badge b-gold">UPDATE</span>');
+    if (n.prime)   tags.push('<span class="badge b-purple">PRIME</span>');
+    if (n.stream)  tags.push('<span class="badge b-cyan">STREAM</span>');
+    if (n.patch)   tags.push('<span class="badge b-green">PATCH</span>');
+    if (!tags.length) tags.push('<span class="badge b-gray">NEWS</span>');
+    return `<a class="news-card" href="${n.link||'#'}" target="_blank" rel="noopener">
+      ${img ? `<img class="news-img" src="${img}" alt="" loading="lazy" onerror="this.style.display='none'">` : ''}
+      <div class="news-body">
+        <div style="display:flex;gap:5px;flex-wrap:wrap">${tags.join('')}</div>
+        <div class="news-title">${n.message||n.translations?.en||'—'}</div>
+        <div class="news-date">${date}</div>
+      </div>
+      <div class="news-foot">↗ Voir sur warframe.com</div>
+    </a>`;
+  }).join('');
+}
+
 async function loadNews() {
   const grid = document.getElementById('news-grid');
+  // Use sessionStorage cache (valid for the current tab session)
+  const cached = sessionStorage.getItem('wf2_news');
+  if (cached) {
+    try {
+      renderNewsData(JSON.parse(cached), grid);
+      newsLoaded = true;
+      return;
+    } catch { /* invalid cache — fall through to fetch */ }
+  }
   grid.innerHTML = '<div class="loading" style="grid-column:1/-1">Chargement des news...</div>';
   const ctrl = new AbortController();
   const to = setTimeout(() => ctrl.abort(), 15000);
@@ -1690,26 +1969,8 @@ async function loadNews() {
     if (!r.ok) throw new Error('HTTP ' + r.status);
     const data = await r.json();
     if (!Array.isArray(data) || !data.length) throw new Error('empty');
-    const sorted = [...data].sort((a,b) => new Date(b.date) - new Date(a.date));
-    grid.innerHTML = sorted.slice(0, 24).map(n => {
-      const date = new Date(n.date).toLocaleDateString('fr-BE', {day:'2-digit',month:'short',year:'numeric'});
-      const img = n.imageLink || n.thumbnail || '';
-      const tags = [];
-      if (n.update)  tags.push('<span class="badge b-gold">UPDATE</span>');
-      if (n.prime)   tags.push('<span class="badge b-purple">PRIME</span>');
-      if (n.stream)  tags.push('<span class="badge b-cyan">STREAM</span>');
-      if (n.patch)   tags.push('<span class="badge b-green">PATCH</span>');
-      if (!tags.length) tags.push('<span class="badge b-gray">NEWS</span>');
-      return `<a class="news-card" href="${n.link||'#'}" target="_blank" rel="noopener">
-        ${img ? `<img class="news-img" src="${img}" alt="" loading="lazy" onerror="this.style.display='none'">` : ''}
-        <div class="news-body">
-          <div style="display:flex;gap:5px;flex-wrap:wrap">${tags.join('')}</div>
-          <div class="news-title">${n.message||n.translations?.en||'—'}</div>
-          <div class="news-date">${date}</div>
-        </div>
-        <div class="news-foot">↗ Voir sur warframe.com</div>
-      </a>`;
-    }).join('');
+    sessionStorage.setItem('wf2_news', JSON.stringify(data));
+    renderNewsData(data, grid);
     newsLoaded = true;
   } catch(e) {
     clearTimeout(to);
@@ -1803,12 +2064,17 @@ function esc(s) { if (!s) return ''; return s.replace(/&/g,'&amp;').replace(/</g
 
 function renderNotes() {
   const grid = document.getElementById('notes-grid');
-  if (!notes.length) {
-    grid.innerHTML = `<div class="empty" style="grid-column:1/-1;column-span:all"><div class="ei">📝</div><p>Aucun bloc — crée une note libre ou une liste d'objectifs</p></div>`;
+  const q = (document.getElementById('notes-q')?.value || '').toLowerCase().trim();
+  let list = notes;
+  if (q) list = notes.filter(n => (n.title||'').toLowerCase().includes(q) || (n.body||'').toLowerCase().includes(q) || (n.items||[]).some(i => i.text.toLowerCase().includes(q)));
+  if (!list.length) {
+    grid.innerHTML = q
+      ? `<div class="empty" style="grid-column:1/-1;column-span:all"><div class="ei">🔍</div><p>Aucun résultat pour "${q}"</p></div>`
+      : `<div class="empty" style="grid-column:1/-1;column-span:all"><div class="ei">📝</div><p>Aucun bloc — crée une note libre ou une liste d'objectifs</p></div>`;
     return;
   }
 
-  grid.innerHTML = notes.map(n => {
+  grid.innerHTML = list.map(n => {
     const date = new Date(n.updatedAt||Date.now()).toLocaleDateString('fr-BE');
     const isPinned_ = isPinned('note', n.id);
     const headBtns = `<div style="display:flex;gap:4px;flex-shrink:0">
@@ -1861,6 +2127,94 @@ function renderNotes() {
 }
 
 // ═══════════════════════════════════════════════
+// CLOUD SYNC (Google Apps Script)
+// ═══════════════════════════════════════════════
+const DEFAULT_CLOUD_URL = 'https://script.google.com/macros/s/AKfycbyZzwEti_yHk6atyTgNB4j2qGqasezGJob3lRgzCD6mBR-LD0eBbD2G1xrFHnk0gdbb/exec';
+let cloudAutoTimer = null;
+
+function getCloudUrl() {
+  return localStorage.getItem('wf2_cloud_url') || DEFAULT_CLOUD_URL;
+}
+
+function updateCloudStatus(state) {
+  const el = document.getElementById('cloud-status');
+  if (!el) return;
+  if (state === 'ok')   { el.textContent = '☁✓'; el.title = 'Cloud sync OK'; el.style.color = 'var(--green)'; }
+  else if (state === 'err')  { el.textContent = '☁✗'; el.title = 'Erreur cloud sync'; el.style.color = 'var(--red)'; }
+  else if (state === 'busy') { el.textContent = '☁…'; el.title = 'Sync en cours...'; el.style.color = 'var(--gold)'; }
+  else { el.textContent = '☁'; el.title = 'Cloud sync — cliquer pour configurer'; el.style.color = 'var(--text-dim)'; }
+}
+
+function saveCloudConfig() {
+  const inp = document.getElementById('cloud-url-input');
+  const url = inp ? inp.value.trim() : '';
+  if (!url) { showIOMsg('URL invalide.', 'red'); return; }
+  localStorage.setItem('wf2_cloud_url', url);
+  showIOMsg('✓ URL sauvegardée.', 'green');
+  updateCloudStatus(null); // will be updated on next sync
+}
+
+function setCloudAuto(checked) {
+  localStorage.setItem('wf2_cloud_auto', checked ? '1' : '0');
+  if (checked) {
+    if (!cloudAutoTimer) cloudAutoTimer = setInterval(() => cloudSave(true), 5 * 60 * 1000);
+  } else {
+    clearInterval(cloudAutoTimer);
+    cloudAutoTimer = null;
+  }
+}
+
+async function cloudSave(silent = false) {
+  const url = getCloudUrl();
+  if (!url) { if (!silent) showIOMsg('Pas d\'URL configurée.', 'red'); return; }
+  updateCloudStatus('busy');
+  try {
+    await fetch(url, {
+      method: 'POST',
+      mode: 'no-cors',
+      body: JSON.stringify(getAllData())
+    });
+    updateCloudStatus('ok');
+    if (!silent) showIOMsg('✓ Données sauvegardées dans le cloud !', 'green');
+  } catch(e) {
+    updateCloudStatus('err');
+    if (!silent) showIOMsg('Erreur sauvegarde cloud: ' + e.message, 'red');
+  }
+}
+
+async function cloudLoad(manual = false) {
+  const url = getCloudUrl();
+  if (!url) { if (manual) showIOMsg('Pas d\'URL configurée.', 'red'); return; }
+  updateCloudStatus('busy');
+  try {
+    const r = await fetch(url + '?v=' + Date.now());
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const text = await r.text();
+    if (!text || text.trim() === '{}' || text.trim() === '') {
+      updateCloudStatus('ok');
+      return;
+    }
+    const data = JSON.parse(text);
+    if (!data || data.v === undefined) throw new Error('Format invalide');
+    applyImport(data);
+    updateCloudStatus('ok');
+    if (manual) showIOMsg('✓ Données chargées depuis le cloud !', 'green');
+  } catch(e) {
+    updateCloudStatus('err');
+    if (manual) showIOMsg('Erreur chargement cloud: ' + e.message, 'red');
+  }
+}
+
+function copyCloudCode() {
+  const el = document.getElementById('cloud-code-block');
+  if (!el) return;
+  navigator.clipboard.writeText(el.textContent).then(
+    () => showIOMsg('✓ Code copié !', 'green'),
+    () => showIOMsg('Copie impossible — sélectionne manuellement le code.', 'red')
+  );
+}
+
+// ═══════════════════════════════════════════════
 // EXPORT / IMPORT
 // ═══════════════════════════════════════════════
 function getAllData() {
@@ -1869,6 +2223,17 @@ function getAllData() {
 
 function openIO() { document.getElementById('io-modal').classList.add('open'); document.getElementById('io-msg').style.display='none'; }
 function closeIO() { document.getElementById('io-modal').classList.remove('open'); }
+function openFAQ() { document.getElementById('faq-modal').classList.add('open'); }
+function closeFAQ() { document.getElementById('faq-modal').classList.remove('open'); }
+function toggleTheme() {
+  const html = document.documentElement;
+  const next = html.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+  html.setAttribute('data-theme', next === 'light' ? 'light' : '');
+  try { localStorage.setItem('wf2_theme', next); } catch {}
+  const btn = document.getElementById('theme-btn');
+  if (btn) btn.textContent = next === 'light' ? '☀' : '🌓';
+  if (btn) btn.title = next === 'light' ? 'Passer en mode clair' : 'Passer en mode sombre';
+}
 
 function exportData() {
   const json = JSON.stringify(getAllData(), null, 2);
@@ -1885,9 +2250,21 @@ function copyExport() {
 
 function applyImport(data) {
   if (!data || data.v === undefined) { showIOMsg('Fichier invalide ou format non reconnu.', 'red'); return; }
-  if (data.builds)   { builds = data.builds; sv(K.builds, builds); renderBuilds(); }
-  if (data.prog)     { progData = data.prog; sv(K.prog, progData); renderProg(); }
-  if (data.loot)     { lootItems = data.loot; sv(K.loot, lootItems); renderLoot(); }
+  if (data.builds)   {
+    builds = (data.builds || []).map(b => ({
+      ...b,
+      tags: Array.isArray(b.tags) ? b.tags.filter(t => t && typeof t === 'string') : []
+    }));
+    sv(K.builds, builds); renderBuilds();
+  }
+  if (data.prog)     { progData = data.prog; sv(K.prog, progData); }
+  if (data.loot)     {
+    lootItems = (data.loot || []).map(i => ({
+      ...i,
+      tags: Array.isArray(i.tags) ? i.tags.filter(t => t && typeof t === 'string') : []
+    }));
+    sv(K.loot, lootItems); renderLoot();
+  }
   if (data.notes)    { notes = data.notes; sv(K.notes, notes); renderNotes(); }
   if (data.pins)     { pinnedWidgets = data.pins; sv('wf2_pins', pinnedWidgets); }
   renderDashboard();
@@ -1920,7 +2297,7 @@ function resetAllData(btn) {
     // Confirmed — wipe everything
     builds = []; lootItems = []; notes = [];
     progData = JSON.parse(JSON.stringify(DEF_PROG));
-    pinnedItems = {builds:[], notes:[]};
+    pinnedWidgets = [];
     [K.builds, K.prog, K.loot, K.notes, 'wf2_pins'].forEach(k => localStorage.removeItem(k));
     renderBuilds(); renderLoot(); renderNotes(); renderDashboard();
     btn.dataset.pending = '';
@@ -1972,30 +2349,27 @@ If it's a weapon: DPS, Statut, Critique, Vitesse de tir. Keep values short (numb
     }]
   };
 
-  // Try local proxy first (when served via start_server.py), fallback to direct API
-  const endpoints = ['http://localhost:8787/api/claude', 'https://api.anthropic.com/v1/messages'];
-  let lastErr = null;
-
-  for (const url of endpoints) {
-    try {
-      const headers = {'Content-Type': 'application/json'};
-      const resp = await fetch(url, {method:'POST', headers, body: JSON.stringify(payload)});
-      if (!resp.ok) { lastErr = `HTTP ${resp.status}`; continue; }
-      const data = await resp.json();
-      if (data.error) { lastErr = data.error; continue; }
-      const text = (data.content||[]).filter(c => c.type === 'text').map(c => c.text).join('');
-      const clean = text.replace(/```json|```/g,'').trim();
-      const stats = JSON.parse(clean);
-      build.stats = stats;
-      sv(K.builds, builds);
-      renderBuilds();
-      return;
-    } catch(e) { lastErr = e.message; }
-  }
-  if (btn) {
-    btn.textContent = '⚠ Échec';
-    btn.disabled = false;
-    btn.title = `Pour activer: lance start_server.py et configure ta clé API.\nErreur: ${lastErr}`;
+  // Requires local proxy (start_server.py on port 8787)
+  try {
+    const resp = await fetch('http://localhost:8787/api/claude', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(payload)
+    });
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    const data = await resp.json();
+    if (data.error) throw new Error(data.error);
+    const text = (data.content||[]).filter(c => c.type === 'text').map(c => c.text).join('');
+    const clean = text.replace(/```json|```/g,'').trim();
+    build.stats = JSON.parse(clean);
+    sv(K.builds, builds);
+    renderBuilds();
+  } catch(e) {
+    if (btn) {
+      btn.textContent = '⚠ Proxy requis';
+      btn.disabled = false;
+      btn.title = `Lance start_server.py pour activer cette fonctionnalité.\nErreur: ${e.message}`;
+    }
   }
 }
 // ═══════════════════════════════════════════════
@@ -2046,7 +2420,7 @@ function togglePin(type, refId) {
   document.querySelectorAll('[data-action="pin-ws"]').forEach(btn => {
     const id = btn.dataset.id;
     btn.classList.toggle('pinned', isPinned('ws', id));
-    btn.textContent = isPinned('ws', id) ? '📌' : '📌';
+    btn.textContent = isPinned('ws', id) ? '📌' : 'pin';
   });
 }
 
@@ -2076,6 +2450,7 @@ function buildWidget(b, w) {
       <span class="widget-title">⚙ ${esc(b.name)}</span>
       <div style="display:flex;gap:5px;align-items:center">
         <span class="badge ${TYPE_BADGE[b.type]||'b-cyan'}" style="font-size:8px">${TYPE_LABEL[b.type]||b.type}</span>
+        ${!reorderMode?`<button class="widget-nav" data-action="go-tab" data-tab="builds" title="Ouvrir onglet Builds">↗</button>`:''}
         ${isPinBtn}
       </div>
     </div>
@@ -2114,7 +2489,10 @@ function noteWidget(n, w) {
     <div class="widget-head">
       ${reorderMode?'<span class="drag-handle">⠿</span>':''}
       <span class="widget-title">${icon} ${esc(n.title)||(n.type==='objective'?'OBJECTIF':'NOTE')}</span>
-      ${isPinBtn}
+      <div style="display:flex;gap:4px;align-items:center">
+        ${!reorderMode?`<button class="widget-nav" data-action="go-tab" data-tab="notes" title="Ouvrir onglet Notes">↗</button>`:''}
+        ${isPinBtn}
+      </div>
     </div>
     <div class="widget-body">${bodyHtml}</div>
   </div>`;
@@ -2131,7 +2509,10 @@ function lootWidget(item, w) {
     <div class="widget-head">
       ${reorderMode?'<span class="drag-handle">⠿</span>':''}
       <span class="widget-title">🎒 ${esc(item.name)}</span>
-      ${isPinBtn}
+      <div style="display:flex;gap:4px;align-items:center">
+        ${!reorderMode?`<button class="widget-nav" data-action="go-tab" data-tab="loot" title="Ouvrir onglet Loot">↗</button>`:''}
+        ${isPinBtn}
+      </div>
     </div>
     <div class="widget-body">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
@@ -2205,7 +2586,9 @@ function renderDashboard() {
 
   // Update all pin buttons in WS tab
   document.querySelectorAll('[data-action="pin-ws"]').forEach(btn => {
-    btn.classList.toggle('pinned', isPinned('ws', btn.dataset.id));
+    const pinned = isPinned('ws', btn.dataset.id);
+    btn.classList.toggle('pinned', pinned);
+    btn.textContent = pinned ? '📌' : 'pin';
   });
 
   if (!pinnedWidgets.length) {
@@ -2266,7 +2649,7 @@ function renderDashboard() {
     });
   }
 }
-['build-modal','prog-modal','io-modal'].forEach(id => {
+['build-modal','prog-modal','io-modal','faq-modal'].forEach(id => {
   document.getElementById(id).addEventListener('click', e => {
     if (e.target.id === id) document.getElementById(id).classList.remove('open');
   });
@@ -2296,13 +2679,19 @@ document.addEventListener('click', e => {
   if (action === 'pin-loot')    { e.stopPropagation(); togglePin('loot', id); }
   if (action === 'pin-ws')      { e.stopPropagation(); togglePin('ws', id); }
   if (action === 'delete-note') { e.stopPropagation(); deleteNote(id, el); }
-  if (action === 'open-tab-build') {
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-    document.querySelector('.tab-btn[data-tab="builds"]').classList.add('active');
-    document.getElementById('tab-builds').classList.add('active');
-  }
+  if (action === 'open-tab-build') { e.stopPropagation(); goTab('builds'); }
+  if (action === 'go-tab') { e.stopPropagation(); goTab(el.dataset.tab); }
 });
+
+function goTab(tab) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  const btn = document.querySelector(`.tab-btn[data-tab="${tab}"]`);
+  if (btn) btn.classList.add('active');
+  const content = document.getElementById('tab-' + tab);
+  if (content) content.classList.add('active');
+  if (tab === 'news' && !newsLoaded) loadNews();
+}
 
 document.addEventListener('change', e => {
   const el = e.target.closest('[data-action]');
@@ -2339,13 +2728,32 @@ function toggleCraft(id, btn) { toggleMat(id, btn); }
 // INIT
 // ═══════════════════════════════════════════════
 async function init() {
+  const savedTheme = (localStorage.getItem('wf2_theme') || 'dark');
+  if (savedTheme === 'light') {
+    document.documentElement.setAttribute('data-theme', 'light');
+    const btn = document.getElementById('theme-btn');
+    if (btn) { btn.textContent = '☀'; btn.title = 'Passer en mode sombre'; }
+  }
   renderBuilds();
-  renderProg();
   renderLoot();
   renderNotes();
   renderDashboard();
   loadWS();
   setInterval(loadWS, 5 * 60 * 1000);
+
+  // Cloud: pre-fill URL input and init auto-sync
+  const savedUrl = localStorage.getItem('wf2_cloud_url') || DEFAULT_CLOUD_URL;
+  const urlInp = document.getElementById('cloud-url-input');
+  if (urlInp) urlInp.value = savedUrl;
+  if (!localStorage.getItem('wf2_cloud_url')) localStorage.setItem('wf2_cloud_url', DEFAULT_CLOUD_URL);
+
+  const autoCheck = document.getElementById('cloud-auto');
+  const autoEnabled = localStorage.getItem('wf2_cloud_auto') === '1';
+  if (autoCheck) autoCheck.checked = autoEnabled;
+  if (autoEnabled) cloudAutoTimer = setInterval(() => cloudSave(true), 5 * 60 * 1000);
+
+  // Auto-load from cloud on startup
+  cloudLoad(false);
 }
 
 init();
